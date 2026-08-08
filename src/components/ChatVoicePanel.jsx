@@ -127,11 +127,11 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
   const roomPlayers = gameState.players || [];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 my-4">
-      <div className={`glass-black p-6 sm:p-8 border border-slate-800/80 shadow-2xl transition-all space-y-6 ${isIsolated ? 'opacity-60 pointer-events-none filter blur-[1px]' : ''}`}>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 my-6">
+      <div className={`glass-black p-7 sm:p-10 border border-slate-800/80 shadow-2xl transition-all space-y-8 ${isIsolated ? 'opacity-60 pointer-events-none filter blur-[1px]' : ''}`}>
         
         {/* Header & Voice Mic Controls */}
-        <div className="flex flex-wrap items-center justify-between pb-4 border-b border-slate-800 gap-4">
+        <div className="flex flex-wrap items-center justify-between pb-5 border-b border-slate-800 gap-5">
           <div className="flex items-center gap-2 text-xs font-heading font-bold text-slate-300 uppercase tracking-wider">
             <MessageSquare className="w-4 h-4 text-slate-400" />
             <span>VOICE CHAT & LIVE SPEECH HUB</span>
@@ -157,8 +157,8 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
         </div>
 
         {/* WHO IS TALKING Live Roster Section */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-black/80 border border-slate-800/80 space-y-3 shadow-inner">
-          <div className="flex items-center justify-between border-b border-slate-800/60 pb-2">
+        <div className="p-5 sm:p-7 rounded-2xl bg-black/80 border border-slate-800/80 space-y-4 shadow-inner">
+          <div className="flex items-center justify-between border-b border-slate-800/60 pb-3">
             <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
               <Activity className="w-3.5 h-3.5 text-emerald-400" />
               WHO IS TALKING
@@ -166,7 +166,7 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
             <span className="text-[10px] font-mono text-slate-500">Real-Time Voice Activity</span>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-4">
             {roomPlayers.map((player) => {
               const isSelf = player.id === currentUser.id;
               const speakerInfo = isSelf
@@ -178,14 +178,14 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
               return (
                 <div
                   key={player.id}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border transition-all text-xs font-mono font-bold ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all text-xs font-mono font-bold ${
                     isTalking
                       ? 'bg-emerald-950/80 border-emerald-400 text-emerald-200 ring-2 ring-emerald-400/50 scale-105 shadow-lg shadow-emerald-500/20'
                       : 'bg-black/60 border-slate-800 text-slate-400'
                   }`}
                 >
                   <span className="text-base">{player.avatar || '👤'}</span>
-                  <span>{player.name}</span>
+                  <span className="text-base truncate max-w-[100px]">{player.name}</span>
                   {isTalking ? (
                     <div className="flex items-center gap-1 text-emerald-400">
                       <Volume2 className="w-4 h-4 animate-bounce" />
@@ -201,7 +201,7 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
         </div>
 
         {/* Message Feed */}
-        <div className="h-40 overflow-y-auto py-4 space-y-3 pr-1 font-sans">
+        <div className="h-44 overflow-y-auto py-5 space-y-4 pr-1 font-sans">
           {isIsolated ? (
             <div className="h-full flex items-center justify-center text-xs font-mono font-bold text-slate-400 gap-2">
               <Lock className="w-4 h-4 text-slate-500" />
@@ -213,7 +213,7 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
             </div>
           ) : (
             chatMessages.map((msg) => (
-              <div key={msg.id} className="flex items-start gap-3 text-xs">
+              <div key={msg.id} className="flex items-start gap-3.5 text-xs">
                 <span className="text-xl leading-none">{msg.avatar || '👤'}</span>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
@@ -222,7 +222,7 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
                     </span>
                     <span className="text-[10px] text-slate-500 font-mono">{msg.timestamp}</span>
                   </div>
-                  <div className="text-slate-200 font-medium mt-0.5">{msg.text}</div>
+                  <div className="text-slate-200 font-medium mt-1 break-words">{msg.text}</div>
                 </div>
               </div>
             ))
@@ -232,8 +232,8 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
 
         {/* Chat Input & Emoji Quick Bar */}
         {!isIsolated && (
-          <div className="pt-3 border-t border-slate-800 space-y-3">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          <div className="pt-5 border-t border-slate-800 space-y-4">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2">
               {QUICK_EMOJIS.map((e) => (
                 <button
                   key={e}
@@ -245,13 +245,13 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
               ))}
             </div>
 
-            <form onSubmit={handleSend} className="flex gap-3">
+            <form onSubmit={handleSend} className="flex gap-4">
               <input
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Type a message..."
-                className="flex-1 bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-4 py-2.5 text-xs text-slate-100 font-medium focus:outline-none"
+                className="flex-1 bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-5 py-3 text-xs text-slate-100 font-medium focus:outline-none"
               />
               <button type="submit" disabled={!inputText.trim()} className="btn-black-primary text-xs px-6 rounded-xl">
                 <Send className="w-4 h-4" />

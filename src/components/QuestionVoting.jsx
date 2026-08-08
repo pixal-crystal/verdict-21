@@ -32,9 +32,9 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-8">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-10 sm:gap-14">
       {/* Header Banner */}
-      <div className="glass-black-highlight p-6 sm:p-7 flex flex-wrap items-center justify-between gap-4 border-l-8 border-slate-400 w-full border border-slate-700/80 shadow-xl my-2">
+      <div className="glass-black-highlight p-7 sm:p-9 flex flex-wrap items-center justify-between gap-6 border-l-8 border-slate-400 w-full border border-slate-700/80 shadow-xl my-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center text-2xl">
             {targetPlayer?.avatar || '🎯'}
@@ -52,7 +52,7 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
                 CHOSE {activeCategory.toUpperCase()}
               </span>
             </div>
-            <h2 className="text-lg font-bold font-heading text-slate-100">
+            <h2 className="text-base sm:text-lg font-bold font-heading text-slate-100 leading-relaxed">
               Submit your <strong className={activeCategory === 'truth' ? 'text-blue-400' : 'text-pink-400'}>{activeCategory.toUpperCase()}</strong> question for {targetPlayer?.name} & vote on the best one
             </h2>
           </div>
@@ -65,9 +65,9 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 w-full my-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-14 w-full my-6">
         {/* Left Column: Live Voting Pool */}
-        <div className="glass-black p-6 sm:p-8 space-y-6 border border-slate-800/80 shadow-2xl">
+        <div className="glass-black p-7 sm:p-10 space-y-8 border border-slate-800/80 shadow-2xl">
           <div className="flex items-center justify-between border-b border-slate-800 pb-4">
             <h3 className="text-base font-bold font-heading text-slate-200 flex items-center gap-2">
               <MessageSquare className="w-4 h-4 text-slate-400" />
@@ -89,7 +89,7 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
               </p>
             </div>
           ) : (
-            <div className="space-y-4 max-h-96 overflow-y-auto pr-1 my-2">
+            <div className="space-y-5 max-h-96 overflow-y-auto pr-1 my-4">
               {gameState.proposedQuestions.map((q) => {
                 const hasVoted = q.votes.includes(currentUser.id);
                 const voteCount = q.votes.length;
@@ -97,13 +97,13 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
                 return (
                   <div
                     key={q.id}
-                    className={`p-5 sm:p-6 rounded-xl border-2 transition-all my-2 ${
+                    className={`p-6 sm:p-7 rounded-xl border-2 transition-all my-3 overflow-hidden ${
                       hasVoted
                         ? 'bg-slate-900 border-slate-400 shadow-md'
                         : 'bg-black border-slate-800 hover:border-slate-700'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="flex items-start justify-between gap-4 mb-4">
                       <div className="flex items-center gap-2">
                         <span className="px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase bg-slate-800 text-slate-300 border border-slate-700">
                           {q.type}
@@ -126,7 +126,7 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
                         <span>{voteCount} Vote{voteCount !== 1 ? 's' : ''}</span>
                       </button>
                     </div>
-                    <p className="text-base font-semibold text-slate-100 font-heading leading-relaxed">{q.text}</p>
+                    <p className="text-base font-semibold text-slate-100 font-heading leading-relaxed break-words">{q.text}</p>
                   </div>
                 );
               })}
@@ -134,7 +134,7 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
           )}
 
           {/* Lock Button */}
-          <div className="pt-4 border-t border-slate-800">
+          <div className="pt-6 border-t border-slate-800 mt-4">
             <button
               onClick={() => {
                 const sorted = [...gameState.proposedQuestions].sort((a, b) => b.votes.length - a.votes.length);
@@ -151,15 +151,15 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
         </div>
 
         {/* Right Column: User Question Input Form */}
-        <div className="glass-black-dark p-6 sm:p-8 space-y-6 flex flex-col justify-between border border-slate-700/80 shadow-2xl">
-          <div className="space-y-5">
+        <div className="glass-black-dark p-7 sm:p-10 space-y-8 flex flex-col justify-between border border-slate-700/80 shadow-2xl">
+          <div className="space-y-6">
             <h3 className="text-base font-bold font-heading text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-4">
               <Plus className="w-4 h-4 text-slate-400" />
               Write & Submit Question
             </h3>
 
             {/* Truth / Dare Selector */}
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <button
                 type="button"
                 onClick={() => setQuestionType('truth')}
@@ -185,7 +185,7 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
             </div>
 
             {/* Custom Text Input Form */}
-            <form onSubmit={handleAddQuestion} className="space-y-4">
+            <form onSubmit={handleAddQuestion} className="space-y-5">
               <div>
                 <label className="block text-xs font-heading font-bold text-slate-400 mb-2 uppercase tracking-wider">
                   YOUR {questionType.toUpperCase()} QUESTION
@@ -210,7 +210,7 @@ export function QuestionVoting({ gameState, currentUser, onVoteQuestion, onSubmi
             </form>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-xl bg-black/80 border border-slate-800 text-[11px] text-slate-400 font-medium leading-relaxed my-2">
+          <div className="p-5 sm:p-6 rounded-xl bg-black/80 border border-slate-800 text-[11px] text-slate-400 font-medium leading-relaxed my-4">
             💡 <strong>How it works:</strong> All participants can submit custom questions. The group votes on the best question, and the highest-voted question is chosen for the Target Player.
           </div>
         </div>

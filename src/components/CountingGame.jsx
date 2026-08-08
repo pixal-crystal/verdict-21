@@ -61,16 +61,16 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-8 sm:gap-10">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-10 sm:gap-14">
       {/* Target Mode Header */}
-      <div className="glass-black-highlight p-6 sm:p-8 flex flex-wrap items-center justify-between gap-4 border-l-8 border-slate-500 w-full my-2 border border-slate-700/80 shadow-xl">
+      <div className="glass-black-highlight p-7 sm:p-10 flex flex-wrap items-center justify-between gap-6 border-l-8 border-slate-500 w-full my-4 border border-slate-700/80 shadow-xl">
         <div>
           <span className="text-xs font-mono text-slate-400 font-bold tracking-wider uppercase flex items-center gap-1.5">
             <Flame className="w-4 h-4 text-slate-400" />
             1 to 21 Counting Mode
           </span>
           <h2 className="text-lg font-bold font-heading text-slate-100 mt-1">
-            Whoever reaches <span className="text-slate-100 font-hero text-2xl font-black">21</span> gets selected for Truth or Dare.
+            Whoever reaches <span className="text-slate-100 font-hero text-2xl font-black">21</span> gets selected.
           </h2>
         </div>
         <div className="text-right">
@@ -83,7 +83,7 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
       </div>
 
       {/* Main Counter Arena */}
-      <div className="glass-black p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-8 relative overflow-hidden w-full my-4 border border-slate-800/80 shadow-2xl">
+      <div className="glass-black p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-10 relative overflow-hidden w-full my-6 border border-slate-800/80 shadow-2xl">
         {/* Semi-Circular SVG Arc Dial */}
         <div className="relative w-full max-w-lg aspect-[2/1] flex flex-col items-center justify-end">
           <svg viewBox="0 0 400 220" className="w-full h-full drop-shadow-xl overflow-visible">
@@ -129,11 +129,11 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
 
         {/* Action Controls */}
         {isMyTurn ? (
-          <div className="w-full max-w-lg space-y-4 pt-4 p-5 sm:p-6 rounded-2xl bg-black/60 border border-slate-800/80 my-3 shadow-inner">
+          <div className="w-full max-w-lg space-y-5 pt-5 p-6 sm:p-8 rounded-2xl bg-black/60 border border-slate-800/80 my-6 shadow-inner">
             <div className="text-xs font-heading font-bold text-slate-300 uppercase tracking-wider">
               Select numbers to count:
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-5 sm:gap-6">
               {[1, 2, 3].map((inc) => {
                 const nextVal = currentCount + inc;
                 const leadsTo21 = nextVal >= 21;
@@ -142,14 +142,14 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
                   <button
                     key={inc}
                     onClick={() => handleCount(inc)}
-                    className={`p-4 sm:p-5 rounded-xl border-2 flex flex-col items-center justify-center gap-1.5 transition-all ${
+                    className={`p-5 sm:p-6 rounded-xl border-2 flex flex-col items-center justify-center gap-2.5 transition-all overflow-hidden ${
                       leadsTo21
                         ? 'bg-red-950/80 border-red-800 text-red-300 hover:bg-red-900 shadow-lg'
                         : 'bg-slate-900 border-slate-700 text-slate-100 hover:border-slate-400 hover:scale-105 shadow-lg'
                     }`}
                   >
                     <span className="text-xs font-mono font-bold uppercase">+{inc}</span>
-                    <span className="text-2xl font-black font-hero">
+                    <span className="text-xl sm:text-2xl font-black font-hero truncate max-w-full">
                       {inc === 1
                         ? nextVal
                         : inc === 2
@@ -162,20 +162,20 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
             </div>
           </div>
         ) : (
-          <div className="p-5 rounded-xl bg-black border border-slate-800 text-slate-400 text-sm font-semibold my-2">
+          <div className="p-6 rounded-xl bg-black border border-slate-800 text-slate-400 text-sm font-semibold my-6">
             Waiting for <strong className="text-slate-200">{currentTurnPlayer ? currentTurnPlayer.name : 'player'}</strong>...
           </div>
         )}
       </div>
 
       {/* Active Players Roster */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 w-full my-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-7 w-full my-6">
         {activePlayers.map((player, idx) => {
           const isTurn = idx === turnPlayerIndex;
           return (
             <div
               key={player.id}
-              className={`p-4 sm:p-5 rounded-xl border-2 flex items-center gap-3 transition-all ${
+              className={`p-5 sm:p-6 rounded-xl border-2 flex items-center gap-4 transition-all overflow-hidden ${
                 isTurn
                   ? 'bg-slate-900 border-slate-500 shadow-lg scale-102'
                   : 'bg-black border-slate-800 opacity-80'
@@ -188,7 +188,7 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
                 {player.avatar}
               </div>
               <div className="overflow-hidden">
-                <div className="text-sm font-bold text-slate-100 truncate font-heading">{player.name}</div>
+                <div className="text-sm font-bold text-slate-100 truncate font-heading max-w-[120px]">{player.name}</div>
                 <div className="text-[10px] font-mono text-slate-400">
                   {isTurn ? 'Turn Active' : 'Waiting'}
                 </div>
@@ -199,7 +199,7 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
       </div>
 
       {/* Counting History */}
-      <div className="glass-black p-6 space-y-3 w-full">
+      <div className="glass-black p-7 sm:p-8 space-y-4 w-full my-4">
         <div className="text-xs font-heading font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
           <Hash className="w-4 h-4 text-slate-400" />
           Round Log
@@ -207,7 +207,7 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
         <div className="space-y-2 max-h-36 overflow-y-auto pr-2">
           {gameState.countHistory && gameState.countHistory.length > 0 ? (
             gameState.countHistory.slice(-5).reverse().map((entry, index) => (
-              <div key={index} className="text-xs font-mono text-slate-300 flex items-center justify-between p-2 rounded-xl bg-black border border-slate-800">
+              <div key={index} className="text-xs font-mono text-slate-300 flex items-center justify-between p-3 rounded-xl bg-black border border-slate-800">
                 <span className="font-bold text-slate-200">{entry.playerName}:</span>
                 <span className="text-slate-400">Counted {entry.numbers.join(', ')}</span>
               </div>

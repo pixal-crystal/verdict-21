@@ -40,9 +40,9 @@ export function RpsTieBreaker({ gameState, currentUser, onRpsComplete }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="glass-panel-pink max-w-xl w-full p-6 text-center space-y-6 animate-in fade-in zoom-in-95 duration-200">
+      <div className="glass-panel-pink max-w-xl w-full p-8 sm:p-10 text-center space-y-8 animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="space-y-2">
+        <div className="space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/20 border border-pink-500/40 text-pink-400 text-xs font-mono font-bold">
             <Swords className="w-4 h-4 text-pink-400" />
             1-POINT TIE-BREAKER DUEL
@@ -54,8 +54,8 @@ export function RpsTieBreaker({ gameState, currentUser, onRpsComplete }) {
         </div>
 
         {/* Competitor Avatars */}
-        <div className="flex items-center justify-center gap-8 py-4">
-          <div className="flex flex-col items-center gap-2">
+        <div className="flex items-center justify-center gap-10 py-6">
+          <div className="flex flex-col items-center gap-3">
             <div className="w-16 h-16 rounded-2xl bg-cyan-500/20 border-2 border-cyan-400 flex items-center justify-center text-3xl">
               {p1?.avatar || '👤'}
             </div>
@@ -64,7 +64,7 @@ export function RpsTieBreaker({ gameState, currentUser, onRpsComplete }) {
 
           <div className="text-2xl font-black text-pink-500 font-mono animate-pulse">VS</div>
 
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-3">
             <div className="w-16 h-16 rounded-2xl bg-pink-500/20 border-2 border-pink-400 flex items-center justify-center text-3xl">
               {p2?.avatar || '👤'}
             </div>
@@ -74,15 +74,15 @@ export function RpsTieBreaker({ gameState, currentUser, onRpsComplete }) {
 
         {/* Choice Buttons for Dueling Players */}
         {isPlayerInDuel ? (
-          <div className="space-y-3">
+          <div className="space-y-5">
             <div className="text-xs font-mono text-cyan-400 font-bold uppercase">MAKE YOUR CHOICE NOW!</div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-5">
               {RPS_CHOICES.map((choice) => (
                 <button
                   key={choice.id}
                   onClick={() => handleSelect(choice.id)}
                   disabled={myChoice !== null}
-                  className={`p-4 rounded-xl border flex flex-col items-center gap-2 transition-all ${
+                  className={`p-5 sm:p-6 rounded-xl border flex flex-col items-center gap-3 transition-all ${
                     myChoice === choice.id
                       ? 'bg-pink-500/30 border-pink-400 scale-105 shadow-lg shadow-pink-500/30'
                       : 'bg-slate-900/80 border-slate-700 hover:border-cyan-400 hover:scale-105'
@@ -95,7 +95,7 @@ export function RpsTieBreaker({ gameState, currentUser, onRpsComplete }) {
             </div>
           </div>
         ) : (
-          <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-semibold text-slate-400 flex items-center justify-center gap-2">
+          <div className="p-6 rounded-xl bg-slate-900/80 border border-slate-800 text-xs font-semibold text-slate-400 flex items-center justify-center gap-3">
             <Sparkles className="w-4 h-4 text-cyan-400 animate-spin" />
             Spectating the tie-breaker clash...
           </div>

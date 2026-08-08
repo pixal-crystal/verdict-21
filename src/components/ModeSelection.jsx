@@ -21,9 +21,9 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-4 flex flex-col items-center gap-8 sm:gap-10 animate-in fade-in zoom-in-95 duration-300">
+    <div className="w-full max-w-5xl mx-auto px-4 py-6 flex flex-col items-center gap-10 sm:gap-14 animate-in fade-in zoom-in-95 duration-300">
       {/* Header Banner */}
-      <div className="glass-black-highlight p-6 sm:p-8 w-full text-center space-y-4 border border-slate-700/80 shadow-2xl my-2">
+      <div className="glass-black-highlight p-7 sm:p-10 w-full text-center space-y-6 border border-slate-700/80 shadow-2xl my-4">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono font-bold uppercase tracking-wider">
           <Sparkles className="w-4 h-4 text-slate-300" />
           IN-GAME GAMEMODE SELECTION
@@ -45,7 +45,7 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
         </p>
 
         {/* Draggable Toggle Switch in the Center */}
-        <div className="pt-4 flex justify-center">
+        <div className="pt-6 flex justify-center">
           <DraggableToggleSwitch
             mode={selectedMode}
             onChange={(newMode) => handleChoose(newMode)}
@@ -55,7 +55,7 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
       </div>
 
       {/* Gamemode Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-14 lg:gap-16 w-full my-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 w-full my-10">
         {/* Card 1: 1 to 21 Counting Game */}
         <div
           onClick={() => isHost && handleChoose('1-21')}
@@ -80,7 +80,7 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
               )}
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <span className="text-[10px] font-mono font-bold text-blue-400 uppercase tracking-widest">
                 STRATEGY & TENSION
               </span>
@@ -93,7 +93,7 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-800/80 relative z-10">
+          <div className="pt-8 border-t border-slate-800/80 relative z-10">
             <button
               onClick={() => isHost && handleChoose('1-21')}
               disabled={!isHost}
@@ -134,7 +134,7 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
               )}
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <span className="text-[10px] font-mono font-bold text-pink-400 uppercase tracking-widest">
                 RANDOM CHANCE
               </span>
@@ -147,7 +147,7 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-800/80 relative z-10">
+          <div className="pt-8 border-t border-slate-800/80 relative z-10">
             <button
               onClick={() => isHost && handleChoose('BOTTLE_SPIN')}
               disabled={!isHost}
@@ -167,7 +167,7 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
 
       {/* Confirm & Launch Button */}
       {isHost ? (
-        <div className="w-full max-w-md my-4">
+        <div className="w-full max-w-md my-8">
           <button
             onClick={handleStart}
             className="w-full btn-black-primary text-sm py-4 rounded-xl shadow-2xl flex items-center justify-center gap-3 text-white tracking-widest"
@@ -177,7 +177,7 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
           </button>
         </div>
       ) : (
-        <div className="p-4 rounded-xl bg-black border border-slate-800 text-xs font-mono text-slate-400 font-bold uppercase tracking-wider my-4">
+        <div className="p-5 rounded-xl bg-black border border-slate-800 text-xs font-mono text-slate-400 font-bold uppercase tracking-wider my-8">
           Host is selecting gamemode for this round...
         </div>
       )}

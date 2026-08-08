@@ -12,9 +12,9 @@ export function TargetCategoryChoice({ gameState, currentUser, onChooseCategory 
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-6 flex flex-col items-center gap-8 sm:gap-10 animate-in fade-in zoom-in-95 duration-300">
+    <div className="w-full max-w-4xl mx-auto px-4 py-8 flex flex-col items-center gap-10 sm:gap-14 animate-in fade-in zoom-in-95 duration-300">
       {/* Header Banner */}
-      <div className="glass-black-highlight p-8 sm:p-10 w-full text-center space-y-4 border border-slate-700/80 shadow-2xl my-2">
+      <div className="glass-black-highlight p-10 sm:p-14 w-full text-center space-y-6 border border-slate-700/80 shadow-2xl my-4">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono font-bold uppercase tracking-wider">
           <ShieldAlert className="w-4 h-4 text-amber-400" />
           TARGET CHOICE PHASE
@@ -35,18 +35,18 @@ export function TargetCategoryChoice({ gameState, currentUser, onChooseCategory 
 
       {/* Choice Buttons for Target Player */}
       {isTarget ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 w-full my-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 sm:gap-14 w-full my-6">
           {/* TRUTH Option */}
           <div
             onClick={() => handleSelect('truth')}
-            className="glass-black p-8 sm:p-10 flex flex-col justify-between space-y-6 border-2 border-blue-500/50 bg-gradient-to-b from-blue-950/60 to-black hover:border-blue-400 cursor-pointer shadow-2xl hover:scale-[1.03] transition-all group rounded-2xl relative overflow-hidden"
+            className="glass-black p-10 sm:p-12 flex flex-col justify-between space-y-8 border-2 border-blue-500/50 bg-gradient-to-b from-blue-950/60 to-black hover:border-blue-400 cursor-pointer shadow-2xl hover:scale-[1.03] transition-all group rounded-2xl relative overflow-hidden"
           >
-            <div className="space-y-4 relative z-10">
+            <div className="space-y-5 relative z-10">
               <div className="w-16 h-16 rounded-2xl bg-blue-500/20 border border-blue-400/40 flex items-center justify-center text-blue-400 shadow-lg group-hover:scale-110 transition-transform">
                 <HelpCircle className="w-8 h-8" />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <span className="text-xs font-mono font-bold text-blue-400 uppercase tracking-widest">
                   HONEST REVELATION
                 </span>
@@ -72,14 +72,14 @@ export function TargetCategoryChoice({ gameState, currentUser, onChooseCategory 
           {/* DARE Option */}
           <div
             onClick={() => handleSelect('dare')}
-            className="glass-black p-8 sm:p-10 flex flex-col justify-between space-y-6 border-2 border-pink-500/50 bg-gradient-to-b from-pink-950/60 to-black hover:border-pink-400 cursor-pointer shadow-2xl hover:scale-[1.03] transition-all group rounded-2xl relative overflow-hidden"
+            className="glass-black p-10 sm:p-12 flex flex-col justify-between space-y-8 border-2 border-pink-500/50 bg-gradient-to-b from-pink-950/60 to-black hover:border-pink-400 cursor-pointer shadow-2xl hover:scale-[1.03] transition-all group rounded-2xl relative overflow-hidden"
           >
-            <div className="space-y-4 relative z-10">
+            <div className="space-y-5 relative z-10">
               <div className="w-16 h-16 rounded-2xl bg-pink-500/20 border border-pink-400/40 flex items-center justify-center text-pink-400 shadow-lg group-hover:scale-110 transition-transform">
                 <Zap className="w-8 h-8" />
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <span className="text-xs font-mono font-bold text-pink-400 uppercase tracking-widest">
                   BOLD ACTION
                 </span>
@@ -104,7 +104,7 @@ export function TargetCategoryChoice({ gameState, currentUser, onChooseCategory 
         </div>
       ) : (
         /* Spectator Waiting View */
-        <div className="p-8 sm:p-10 rounded-2xl bg-black/80 border border-slate-800 text-center space-y-4 max-w-lg w-full my-4 shadow-xl">
+        <div className="p-10 sm:p-12 rounded-2xl bg-black/80 border border-slate-800 text-center space-y-5 max-w-lg w-full my-6 shadow-xl">
           <Sparkles className="w-8 h-8 text-amber-400 mx-auto animate-pulse" />
           <h4 className="text-xl font-bold font-heading text-slate-200">
             Waiting for {targetPlayer.name}

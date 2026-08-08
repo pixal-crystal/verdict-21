@@ -135,9 +135,9 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
           {/* Main Grid: Fills space evenly with clean box padding */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 lg:gap-16 w-full items-stretch animate-in fade-in zoom-in duration-300 my-4">
             {/* Left Column: Player Identity (Settings) */}
-            <div className="lg:col-span-5 glass-black p-8 sm:p-10 flex flex-col justify-between border border-slate-800/80 shadow-2xl space-y-8">
-              <div className="space-y-8">
-                <div className="flex items-center gap-3 border-b border-slate-800 pb-5">
+            <div className="lg:col-span-5 glass-black p-10 sm:p-12 md:p-14 flex flex-col justify-between border border-slate-800/80 shadow-2xl space-y-12">
+              <div className="space-y-12 sm:space-y-16">
+                <div className="flex items-center gap-3 border-b border-slate-800 pb-6 mb-4">
                   <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
                     <Users className="w-5 h-5 text-slate-300" />
                   </div>
@@ -148,8 +148,8 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
                 </div>
 
                 {/* Name Input */}
-                <div className="space-y-3 my-6">
-                  <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider">
+                <div className="space-y-4 my-10 sm:my-12">
+                  <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider mb-2">
                     DISPLAY NAME
                   </label>
                   <input
@@ -158,21 +158,21 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
                     onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })}
                     placeholder="Enter your name..."
                     maxLength={14}
-                    className="w-full bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-4 py-3.5 text-slate-100 font-bold text-sm focus:outline-none transition-all shadow-inner"
+                    className="w-full bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-5 py-4 text-slate-100 font-bold text-sm focus:outline-none transition-all shadow-inner"
                   />
                 </div>
 
                 {/* Avatar Selector */}
-                <div className="space-y-3 my-8">
-                  <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider">
+                <div className="space-y-4 my-12 sm:my-14">
+                  <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider mb-2">
                     CHOOSE AVATAR
                   </label>
-                  <div className="grid grid-cols-5 gap-4 sm:gap-5 p-5 bg-black/50 border border-slate-800/80 rounded-2xl">
+                  <div className="grid grid-cols-5 gap-5 sm:gap-6 md:gap-7 p-6 sm:p-8 bg-black/50 border border-slate-800/80 rounded-2xl">
                     {AVATARS.map((av) => (
                       <button
                         key={av}
                         onClick={() => setCurrentUser({ ...currentUser, avatar: av })}
-                        className={`text-xl p-2.5 rounded-xl border-2 transition-all flex items-center justify-center aspect-square ${
+                        className={`text-xl p-3 sm:p-3.5 rounded-xl border-2 transition-all flex items-center justify-center aspect-square ${
                           currentUser.avatar === av
                             ? 'bg-slate-800 border-slate-400 scale-105 shadow-md'
                             : 'bg-black border-slate-800 hover:border-slate-700'
@@ -185,17 +185,17 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
                 </div>
 
                 {/* Accent Color Selector */}
-                <div className="space-y-3 my-8">
-                  <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider">
+                <div className="space-y-4 my-12 sm:my-14">
+                  <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider mb-2">
                     ACCENT COLOR
                   </label>
-                  <div className="flex items-center gap-4 p-5 bg-black/50 border border-slate-800/80 rounded-2xl justify-around">
+                  <div className="flex items-center gap-6 sm:gap-8 p-6 sm:p-8 bg-black/50 border border-slate-800/80 rounded-2xl justify-around">
                     {STEALTH_ACCENTS.map((c) => (
                       <button
                         key={c}
                         onClick={() => setCurrentUser({ ...currentUser, color: c })}
                         style={{ backgroundColor: c }}
-                        className={`w-9 h-9 rounded-lg border-2 transition-all ${
+                        className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg border-2 transition-all ${
                           currentUser.color === c ? 'border-white scale-110 shadow-md' : 'border-transparent opacity-75'
                         }`}
                       />

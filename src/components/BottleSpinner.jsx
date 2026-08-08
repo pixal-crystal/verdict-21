@@ -181,9 +181,9 @@ export function BottleSpinner({ gameState, currentUser, onBottleLand }) {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-4 flex flex-col items-center gap-8 sm:gap-10">
+    <div className="w-full max-w-5xl mx-auto px-4 py-6 flex flex-col items-center gap-10 sm:gap-14">
       {/* Header */}
-      <div className="glass-black-highlight p-6 sm:p-8 w-full flex flex-wrap items-center justify-between gap-4 border-l-8 border-slate-500 border border-slate-700/80 shadow-xl my-2">
+      <div className="glass-black-highlight p-7 sm:p-10 w-full flex flex-wrap items-center justify-between gap-6 border-l-8 border-slate-500 border border-slate-700/80 shadow-xl my-4">
         <div>
           <span className="text-xs font-mono text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
             <Disc className="w-4 h-4 text-slate-300" />
@@ -208,7 +208,7 @@ export function BottleSpinner({ gameState, currentUser, onBottleLand }) {
       </div>
 
       {/* Responsive Aspect-Ratio Canvas Container */}
-      <div ref={containerRef} className="glass-black p-6 sm:p-10 flex flex-col items-center justify-center relative overflow-hidden w-full aspect-square max-w-[480px] mx-auto my-4 border border-slate-800/80 shadow-2xl">
+      <div ref={containerRef} className="glass-black p-8 sm:p-12 flex flex-col items-center justify-center relative overflow-hidden w-full aspect-square max-w-[480px] mx-auto my-6 border border-slate-800/80 shadow-2xl">
         <canvas
           ref={canvasRef}
           width={canvasSize}

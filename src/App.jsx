@@ -42,9 +42,34 @@ export function App() {
     networkHub?.broadcastState(nextState);
   };
 
-  // Host handles incoming client actions (e.g. JOIN_PLAYER)
+  // Host handles incoming client actions (e.g. JOIN_PLAYER, UPDATE_PLAYER_PROFILE)
   const handleClientAction = (action) => {
     if (!action) return;
+
+    // Participant profile updates (Name, Avatar, Accent Color) - ONLY participant can change their own settings
+    if (action.type === 'UPDATE_PLAYER_PROFILE' && action.player?.id) {
+      setGameState((prevState) => {
+        const updatedPlayers = prevState.players.map(p => {
+          if (p.id === action.player.id) {
+            return {
+              ...p,
+              name: action.player.name || p.name,
+              avatar: action.player.avatar || p.avatar,
+              color: action.player.color || p.color
+            };
+          }
+          return p;
+        });
+
+        const nextState = { ...prevState, players: updatedPlayers };
+        if (networkHub) {
+          networkHub.broadcastState(nextState);
+        }
+        return nextState;
+      });
+      return;
+    }
+
     if (action.type === 'JOIN_PLAYER' && action.player) {
       setGameState((prevState) => {
         const existingIdx = prevState.players.findIndex(p => p.id === action.player.id || p.name === action.player.name);
@@ -241,7 +266,8 @@ export function App() {
     const nextState = {
       ...gameState,
       answerText: text,
-      answerSubmitted: true
+      answerSubmitted: true,
+      phase: 'ANSWER_REVEAL'
     };
     setGameState(nextState);
     networkHub?.broadcastState(nextState);
@@ -369,7 +395,7 @@ export function App() {
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden font-body bg-black text-slate-100">
-      <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 z-10 flex flex-col justify-center items-center min-h-screen gap-8 sm:gap-12 py-6">
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 z-10 flex flex-col justify-center items-center min-h-screen gap-10 sm:gap-16 py-8">
 
       {/* Anti-Screenshot Overlay */}
       <AntiScreenshotOverlay active={antiScreenshot && gameState.phase !== 'LOBBY'} />
@@ -383,7 +409,7 @@ export function App() {
 
       {/* Hero Header on Black Background (Only visible in Lobby) */}
       {gameState.phase === 'LOBBY' && (
-        <div className="flex flex-col items-center justify-center text-center space-y-3 w-full max-w-4xl mx-auto animate-in slide-in-from-top-4 duration-500">
+        <div className="flex flex-col items-center justify-center text-center space-y-5 w-full max-w-4xl mx-auto animate-in slide-in-from-top-4 duration-500">
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-black font-hero tracking-tighter uppercase leading-none text-slate-100 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
             <span>VERDICT</span> <span className="text-slate-500 font-extrabold">21</span>
           </h1>
@@ -396,7 +422,7 @@ export function App() {
 
       {/* Main Content Arena */}
       <div className="w-full flex-1 flex flex-col relative justify-center">
-        <main className="flex-1 pb-8 z-10">{renderPhaseView()}</main>
+        <main className="flex-1 pb-10 z-10">{renderPhaseView()}</main>
 
         {/* Integrated Chat & Voice Panel */}
         {gameState.phase !== 'LOBBY' && (
