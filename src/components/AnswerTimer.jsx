@@ -41,10 +41,10 @@ export function AnswerTimer({ gameState, currentUser, onAnswerSubmit, onTimeoutP
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 py-4 flex flex-col gap-6">
+    <div className="w-full max-w-3xl mx-auto px-4 py-4 flex flex-col gap-8">
       {/* Target Question Card */}
-      <div className="glass-black-highlight p-6 text-center space-y-3 border-l-8 border-slate-400">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono font-bold uppercase tracking-wider">
+      <div className="glass-black-highlight p-6 sm:p-8 text-center space-y-4 border-l-8 border-slate-400 border border-slate-700/80 shadow-xl my-2">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono font-bold uppercase tracking-wider">
           {question.type?.toUpperCase()} FOR {targetPlayer?.name}
         </div>
 
@@ -55,7 +55,7 @@ export function AnswerTimer({ gameState, currentUser, onAnswerSubmit, onTimeoutP
 
       {!isRevealed ? (
         /* Countdown Timer & Answer Form */
-        <div className="glass-black p-8 flex flex-col items-center justify-center text-center space-y-6">
+        <div className="glass-black p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-8 my-4 border border-slate-800/80 shadow-2xl">
           {/* Timer Clock Circle */}
           <div className="relative w-40 h-40 rounded-full bg-black border-4 border-slate-700 flex flex-col items-center justify-center shadow-xl">
             <Clock className="w-5 h-5 text-slate-400 mb-1" />
@@ -74,18 +74,18 @@ export function AnswerTimer({ gameState, currentUser, onAnswerSubmit, onTimeoutP
 
           {isTarget ? (
             /* Target Answer Input Box */
-            <form onSubmit={handleSubmit} className="w-full max-w-md space-y-3">
+            <form onSubmit={handleSubmit} className="w-full max-w-md space-y-4 my-2">
               <textarea
                 value={answerInput}
                 onChange={(e) => setAnswerInput(e.target.value)}
                 placeholder="Type your response here..."
                 rows={3}
-                className="w-full bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl p-3 text-xs text-slate-100 focus:outline-none resize-none shadow-inner"
+                className="w-full bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl p-4 text-xs text-slate-100 focus:outline-none resize-none shadow-inner"
               />
               <button
                 type="submit"
                 disabled={!answerInput.trim()}
-                className="w-full btn-black-primary text-xs py-3 rounded-xl shadow-lg"
+                className="w-full btn-black-primary text-xs py-3.5 rounded-xl shadow-lg"
               >
                 <Send className="w-4 h-4" />
                 Submit Answer
@@ -93,33 +93,33 @@ export function AnswerTimer({ gameState, currentUser, onAnswerSubmit, onTimeoutP
             </form>
           ) : (
             /* Spectator View */
-            <div className="p-4 rounded-xl bg-black border border-slate-800 text-slate-300 text-xs font-semibold">
+            <div className="p-5 rounded-xl bg-black border border-slate-800 text-slate-300 text-xs font-semibold my-2">
               Waiting for <strong className="text-white">{targetPlayer?.name}</strong> to answer...
             </div>
           )}
         </div>
       ) : (
         /* Post-Answer Reveal View */
-        <div className="glass-black p-6 text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono font-bold uppercase">
+        <div className="glass-black p-8 sm:p-10 text-center space-y-6 animate-in fade-in zoom-in-95 duration-200 my-4 border border-slate-800/80 shadow-2xl">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono font-bold uppercase">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             Answer Revealed
           </div>
 
-          <div className="p-5 rounded-2xl bg-black border border-slate-800 text-left space-y-3 shadow-xl">
+          <div className="p-6 rounded-2xl bg-black border border-slate-800 text-left space-y-4 shadow-xl my-2">
             <div className="text-xs font-mono font-bold text-slate-400 uppercase">Question:</div>
             <div className="text-sm font-medium text-slate-300 italic font-heading">"{question.text}"</div>
             
-            <div className="border-t border-slate-800 pt-3">
+            <div className="border-t border-slate-800 pt-4">
               <div className="text-xs font-mono font-bold text-slate-400 uppercase">{targetPlayer?.name}'s Response:</div>
               <div className="text-xl font-bold font-heading text-slate-100 mt-1">{gameState.answerText || answerInput}</div>
             </div>
           </div>
 
-          <div className="pt-2">
+          <div className="pt-3">
             <button
               onClick={onNextRound}
-              className="btn-black-primary text-xs px-8 py-3 rounded-xl shadow-lg"
+              className="btn-black-primary text-xs px-8 py-3.5 rounded-xl shadow-lg"
             >
               Start Next Round
             </button>

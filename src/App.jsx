@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Lobby } from './components/Lobby';
+import { ModeSelection } from './components/ModeSelection';
 import { CountingGame } from './components/CountingGame';
 import { BottleSpinner } from './components/BottleSpinner';
 import { RpsTieBreaker } from './components/RpsTieBreaker';
@@ -29,7 +30,7 @@ export function App() {
   const [antiScreenshot, setAntiScreenshot] = useState(true);
   const [networkHub, setNetworkHub] = useState(null);
 
-  // Initialize Host Room
+  // Initialize Host Room (Transitions straight into In-Game Mode Selection)
   const handleCreateRoom = ({ name, avatar, color, gameMode }) => {
     const code = `TOD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
     const me = { id: currentUser.id, name, avatar, color, isHost: true, isBenched: false, benchRoundsLeft: 0, score: 0 };
@@ -39,15 +40,15 @@ export function App() {
       ...INITIAL_GAME_STATE,
       roomCode: code,
       isHost: true,
-      gameMode,
+      gameMode: gameMode || '1-21',
       players,
-      phase: gameMode === '1-21' ? 'COUNTING_GAME' : 'BOTTLE_SPIN'
+      phase: 'MODE_SELECTION' // In-Game Gamemode Selection Screen
     };
 
     setGameState(nextState);
 
     const hub = new NetworkHub(code, true, (state) => setGameState(state), (msg) => setChatMessages(prev => [...prev, msg]));
-    hub.setHostDetails(name, players.length, gameMode);
+    hub.setHostDetails(name, players.length, gameMode || '1-21');
     setNetworkHub(hub);
   };
 
@@ -58,6 +59,17 @@ export function App() {
     setNetworkHub(hub);
 
     hub.broadcastAction({ type: 'JOIN_PLAYER', player: me });
+  };
+
+  // Gamemode Switcher Handler (Called during the game)
+  const handleSelectMode = (mode, launch = false) => {
+    const nextState = {
+      ...gameState,
+      gameMode: mode,
+      phase: launch ? (mode === '1-21' ? 'COUNTING_GAME' : 'BOTTLE_SPIN') : 'MODE_SELECTION'
+    };
+    setGameState(nextState);
+    networkHub?.broadcastState(nextState);
   };
 
   // 1-21 Counting Move Handler
@@ -193,7 +205,7 @@ export function App() {
     }, 4000);
   };
 
-  // Advance Next Round
+  // Advance Next Round (Navigates to Mode Selection for next round)
   const handleNextRound = () => {
     const advancedState = advanceGameRound(gameState);
     setGameState(advancedState);
@@ -216,6 +228,14 @@ export function App() {
             onJoinRoom={handleJoinRoom}
             currentUser={currentUser}
             setCurrentUser={setCurrentUser}
+          />
+        );
+      case 'MODE_SELECTION':
+        return (
+          <ModeSelection
+            gameState={gameState}
+            currentUser={currentUser}
+            onSelectMode={handleSelectMode}
           />
         );
       case 'COUNTING_GAME':
@@ -281,14 +301,11 @@ export function App() {
       {/* Anti-Screenshot Overlay */}
       <AntiScreenshotOverlay active={antiScreenshot && gameState.phase !== 'LOBBY'} />
 
-      {/* Floating Navbar Header (Now at the very top) */}
+      {/* Floating Navbar Header */}
       <Navbar
         gameState={gameState}
         currentUser={currentUser}
-        voiceMuted={voiceMuted}
-        toggleVoiceMute={() => setVoiceMuted(!voiceMuted)}
-        antiScreenshot={antiScreenshot}
-        setAntiScreenshot={setAntiScreenshot}
+        onSwitchMode={() => handleSelectMode(gameState.gameMode, false)}
       />
 
       {/* Hero Header on Black Background (Only visible in Lobby) */}

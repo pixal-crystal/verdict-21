@@ -85,6 +85,6 @@ export function advanceGameRound(gameState) {
     timerSeconds: 30,
     answerText: '',
     answerSubmitted: false,
-    phase: gameState.gameMode === '1-21' ? 'COUNTING_GAME' : 'BOTTLE_SPIN'
+    phase: 'MODE_SELECTION'
   };
 }

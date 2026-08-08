@@ -181,9 +181,9 @@ export function BottleSpinner({ gameState, currentUser, onBottleLand }) {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-4 flex flex-col items-center gap-6 sm:gap-8">
+    <div className="w-full max-w-5xl mx-auto px-4 py-4 flex flex-col items-center gap-8 sm:gap-10">
       {/* Header */}
-      <div className="glass-black-highlight p-4 sm:p-6 w-full flex flex-wrap items-center justify-between gap-4 border-l-8 border-slate-500">
+      <div className="glass-black-highlight p-6 sm:p-8 w-full flex flex-wrap items-center justify-between gap-4 border-l-8 border-slate-500 border border-slate-700/80 shadow-xl my-2">
         <div>
           <span className="text-xs font-mono text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
             <Disc className="w-4 h-4 text-slate-300" />
@@ -198,7 +198,7 @@ export function BottleSpinner({ gameState, currentUser, onBottleLand }) {
             <button
               onClick={handleSpin}
               disabled={isSpinning}
-              className="btn-black-primary text-xs sm:text-sm px-6 py-3"
+              className="btn-black-primary text-xs sm:text-sm px-6 py-3.5"
             >
               <Play className="w-4 h-4 fill-current" />
               {isSpinning ? 'Spinning...' : 'Spin Bottle'}
@@ -208,7 +208,7 @@ export function BottleSpinner({ gameState, currentUser, onBottleLand }) {
       </div>
 
       {/* Responsive Aspect-Ratio Canvas Container */}
-      <div ref={containerRef} className="glass-black p-4 sm:p-8 flex flex-col items-center justify-center relative overflow-hidden w-full aspect-square max-w-[460px] mx-auto">
+      <div ref={containerRef} className="glass-black p-6 sm:p-10 flex flex-col items-center justify-center relative overflow-hidden w-full aspect-square max-w-[480px] mx-auto my-4 border border-slate-800/80 shadow-2xl">
         <canvas
           ref={canvasRef}
           width={canvasSize}
@@ -217,7 +217,7 @@ export function BottleSpinner({ gameState, currentUser, onBottleLand }) {
         />
 
         {!isHost && !isSpinning && (
-          <div className="mt-3 text-xs font-heading font-semibold text-slate-400 uppercase tracking-wider z-10 text-center">
+          <div className="mt-4 text-xs font-heading font-semibold text-slate-400 uppercase tracking-wider z-10 text-center">
             Waiting for host to spin the bottle...
           </div>
         )}

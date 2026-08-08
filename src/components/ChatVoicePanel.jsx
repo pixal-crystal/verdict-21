@@ -44,8 +44,8 @@ export function ChatVoicePanel({ gameState, currentUser, chatMessages, onSendMes
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
-      <div className={`glass-black p-6 transition-all ${isIsolated ? 'opacity-50 pointer-events-none filter blur-[2px]' : ''}`}>
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 my-4">
+      <div className={`glass-black p-6 sm:p-8 border border-slate-800/80 shadow-2xl transition-all ${isIsolated ? 'opacity-50 pointer-events-none filter blur-[2px]' : ''}`}>
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center gap-2 text-xs font-heading font-bold text-slate-300 uppercase tracking-wider">
             <MessageSquare className="w-4 h-4 text-slate-400" />

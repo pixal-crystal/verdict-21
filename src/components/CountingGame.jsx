@@ -61,9 +61,9 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-6 sm:gap-8">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-8 sm:gap-10">
       {/* Target Mode Header */}
-      <div className="glass-black-highlight p-6 flex flex-wrap items-center justify-between gap-4 border-l-8 border-slate-500 w-full">
+      <div className="glass-black-highlight p-6 sm:p-8 flex flex-wrap items-center justify-between gap-4 border-l-8 border-slate-500 w-full my-2 border border-slate-700/80 shadow-xl">
         <div>
           <span className="text-xs font-mono text-slate-400 font-bold tracking-wider uppercase flex items-center gap-1.5">
             <Flame className="w-4 h-4 text-slate-400" />
@@ -83,7 +83,7 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
       </div>
 
       {/* Main Counter Arena */}
-      <div className="glass-black p-6 sm:p-8 flex flex-col items-center justify-center text-center space-y-6 relative overflow-hidden w-full">
+      <div className="glass-black p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-8 relative overflow-hidden w-full my-4 border border-slate-800/80 shadow-2xl">
         {/* Semi-Circular SVG Arc Dial */}
         <div className="relative w-full max-w-lg aspect-[2/1] flex flex-col items-center justify-end">
           <svg viewBox="0 0 400 220" className="w-full h-full drop-shadow-xl overflow-visible">
@@ -129,11 +129,11 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
 
         {/* Action Controls */}
         {isMyTurn ? (
-          <div className="w-full max-w-lg space-y-3 pt-2">
+          <div className="w-full max-w-lg space-y-4 pt-4 p-5 sm:p-6 rounded-2xl bg-black/60 border border-slate-800/80 my-3 shadow-inner">
             <div className="text-xs font-heading font-bold text-slate-300 uppercase tracking-wider">
               Select numbers to count:
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-4">
               {[1, 2, 3].map((inc) => {
                 const nextVal = currentCount + inc;
                 const leadsTo21 = nextVal >= 21;
@@ -142,7 +142,7 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
                   <button
                     key={inc}
                     onClick={() => handleCount(inc)}
-                    className={`p-4 rounded-xl border-2 flex flex-col items-center justify-center gap-1 transition-all ${
+                    className={`p-4 sm:p-5 rounded-xl border-2 flex flex-col items-center justify-center gap-1.5 transition-all ${
                       leadsTo21
                         ? 'bg-red-950/80 border-red-800 text-red-300 hover:bg-red-900 shadow-lg'
                         : 'bg-slate-900 border-slate-700 text-slate-100 hover:border-slate-400 hover:scale-105 shadow-lg'
@@ -162,22 +162,22 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
             </div>
           </div>
         ) : (
-          <div className="p-4 rounded-xl bg-black border border-slate-800 text-slate-400 text-sm font-semibold">
+          <div className="p-5 rounded-xl bg-black border border-slate-800 text-slate-400 text-sm font-semibold my-2">
             Waiting for <strong className="text-slate-200">{currentTurnPlayer ? currentTurnPlayer.name : 'player'}</strong>...
           </div>
         )}
       </div>
 
       {/* Active Players Roster */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 w-full my-4">
         {activePlayers.map((player, idx) => {
           const isTurn = idx === turnPlayerIndex;
           return (
             <div
               key={player.id}
-              className={`p-4 rounded-xl border-2 flex items-center gap-3 transition-all ${
+              className={`p-4 sm:p-5 rounded-xl border-2 flex items-center gap-3 transition-all ${
                 isTurn
-                  ? 'bg-slate-900 border-slate-500 shadow-lg'
+                  ? 'bg-slate-900 border-slate-500 shadow-lg scale-102'
                   : 'bg-black border-slate-800 opacity-80'
               }`}
             >
