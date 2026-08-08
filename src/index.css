@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800;900&family=Space+Grotesk:wght@400;500;700&family=Syne:wght@700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --pitch-black: #000000;
+  --dark-slate-1: #0a0d14;
+  --dark-slate-2: #121824;
+  --dark-slate-3: #1e293b;
+  --dark-slate-4: #334155;
+  --dark-slate-5: #475569;
+
+  --text-platinum: #f8fafc;
+  --text-silver: #cbd5e1;
+  --text-muted-slate: #94a3b8;
+
+  --font-hero: 'Syne', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+html, body, #root {
+  height: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--pitch-black);
+  color: var(--text-platinum);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+/* Main Content Wrapper */
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px;
+}
+
+/* Pitch Black Grid Pattern */
+.pitch-black-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.12;
+  background-size: 36px 36px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #334155, #1e293b);
+  border-radius: 4px;
+}
+
+/* Typography Fonts */
+.font-hero {
+  font-family: var(--font-hero);
+}
+.font-heading {
+  font-family: var(--font-heading);
+}
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Clean Pitch Black Glass Cards with Modern Rounded Rect Corners (16px / 12px) */
+.glass-black {
+  background: linear-gradient(145deg, rgba(16, 21, 34, 0.95), rgba(4, 5, 8, 0.98));
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-radius: 16px; /* Clean rounded rect corners */
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-black-highlight {
+  background: linear-gradient(145deg, rgba(24, 32, 50, 0.95), rgba(8, 10, 16, 0.98));
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(203, 213, 225, 0.25);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+}
+
+.glass-black-dark {
+  background: linear-gradient(145deg, rgba(10, 13, 20, 0.98), rgba(2, 2, 4, 0.99));
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(71, 85, 105, 0.3);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.95);
+  border-radius: 16px;
+}
+
+/* Clean Rounded Rect Buttons (12px radius) */
+.btn-black-primary {
+  background: linear-gradient(135deg, #334155, #0f172a);
+  color: #f8fafc;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 12px; /* Clean rounded rect, no stadium ellipses */
+  border: 1px solid rgba(203, 213, 225, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-black-primary:hover {
+  background: linear-gradient(135deg, #475569, #1e293b);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.9);
+}
+
+.btn-black-accent {
+  background: linear-gradient(135deg, #475569, #1e293b);
+  color: #f8fafc;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(203, 213, 225, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-black-accent:hover {
+  background: linear-gradient(135deg, #64748b, #334155);
+  transform: translateY(-1px);
+}
+
+/* Chat Terminal Bubbles */
+.chat-bubble {
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(18, 24, 38, 0.95), rgba(6, 8, 14, 0.98));
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
