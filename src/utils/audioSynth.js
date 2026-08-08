@@ -3,6 +3,8 @@ class SoundSynth {
   constructor() {
     this.ctx = null;
     this.muted = false;
+    this.lastTickTime = 0;
+    this.lastSpinClickTime = 0;
   }
 
   init() {
@@ -19,6 +21,10 @@ class SoundSynth {
 
   playSpinClick() {
     if (this.muted) return;
+    const now = Date.now();
+    if (now - this.lastSpinClickTime < 60) return; // Rate-limit to prevent sound loops
+    this.lastSpinClickTime = now;
+
     this.init();
     if (!this.ctx) return;
 
@@ -35,12 +41,21 @@ class SoundSynth {
     osc.connect(gain);
     gain.connect(this.ctx.destination);
 
+    osc.onended = () => {
+      osc.disconnect();
+      gain.disconnect();
+    };
+
     osc.start();
     osc.stop(this.ctx.currentTime + 0.05);
   }
 
   playTick() {
     if (this.muted) return;
+    const now = Date.now();
+    if (now - this.lastTickTime < 60) return; // Rate-limit to prevent sound loops
+    this.lastTickTime = now;
+
     this.init();
     if (!this.ctx) return;
 
@@ -56,6 +71,11 @@ class SoundSynth {
 
     osc.connect(gain);
     gain.connect(this.ctx.destination);
+
+    osc.onended = () => {
+      osc.disconnect();
+      gain.disconnect();
+    };
 
     osc.start();
     osc.stop(this.ctx.currentTime + 0.03);

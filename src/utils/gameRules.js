@@ -45,7 +45,7 @@ export function setupQuestionPhase(gameState) {
 
   return {
     ...gameState,
-    phase: 'QUESTION_SELECTION',
+    phase: 'TARGET_CHOICE', // Target chooses TRUTH or DARE first!
     leadAskerId: leadAsker ? leadAsker.id : null,
     proposedQuestions: [], // Empty initially - 100% user input driven!
     selectedQuestion: null,
@@ -70,12 +70,18 @@ export function advanceGameRound(gameState) {
     return player;
   });
 
+  const activePlayers = updatedPlayers.filter(p => !p.isBenched);
+  const nextStartIdx = activePlayers.length > 0
+    ? ((gameState.startingTurnPlayerIndex || 0) + 1) % activePlayers.length
+    : 0;
+
   return {
     ...gameState,
     players: updatedPlayers,
     benchedPlayers: updatedBenched,
     currentCount: 0,
-    turnPlayerIndex: 0,
+    startingTurnPlayerIndex: nextStartIdx,
+    turnPlayerIndex: nextStartIdx,
     countHistory: [],
     targetPlayerId: null,
     leadAskerId: null,

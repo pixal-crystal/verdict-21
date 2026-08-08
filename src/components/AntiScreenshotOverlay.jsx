@@ -2,39 +2,42 @@ import React, { useState, useEffect } from 'react';
 import { ShieldAlert, EyeOff, Lock } from 'lucide-react';
 
 export function AntiScreenshotOverlay({ active }) {
-  const [isWindowBlurred, setIsWindowBlurred] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
+  const [isScreenshotAttempted, setIsScreenshotAttempted] = useState(false);
 
   useEffect(() => {
     if (!active) return;
 
-    // Detect Focus Loss (e.g., Snipping tool, switching windows, devtools)
-    const handleBlur = () => setIsWindowBlurred(true);
-    const handleFocus = () => setIsWindowBlurred(false);
-
-    // Prevent Context Menu & Copy
+    // Prevent Context Menu & Dragging Images
     const handleContextMenu = (e) => e.preventDefault();
 
-    // Detect PrintScreen / Screenshot shortcuts
+    // Comprehensive Mac OS & Windows Screenshot Shortcut Detector
     const handleKeyDown = (e) => {
-      if (
-        e.key === 'PrintScreen' ||
-        (e.metaKey && e.shiftKey && (e.key === '3' || e.key === '4' || e.key === '5')) ||
-        (e.ctrlKey && e.key === 'p')
-      ) {
+      const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      const isShift = e.shiftKey;
+      const key = e.key ? e.key.toLowerCase() : '';
+      const code = e.code ? e.code.toLowerCase() : '';
+
+      const isMacScreenshotKey =
+        (isCmdOrCtrl && isShift && (key === '3' || key === '4' || key === '5' || key === '6' || code.startsWith('digit'))) ||
+        (isCmdOrCtrl && isShift && key === 's') ||
+        (isCmdOrCtrl && key === 'p');
+
+      const isWindowsScreenshotKey =
+        e.key === 'PrintScreen' || code === 'printscreen';
+
+      if (isMacScreenshotKey || isWindowsScreenshotKey) {
+        setIsScreenshotAttempted(true);
         setShowWarning(true);
-        setTimeout(() => setShowWarning(false), 3000);
+        setTimeout(() => setShowWarning(false), 3500);
+        setTimeout(() => setIsScreenshotAttempted(false), 2000);
       }
     };
 
-    window.addEventListener('blur', handleBlur);
-    window.addEventListener('focus', handleFocus);
     window.addEventListener('contextmenu', handleContextMenu);
     window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener('blur', handleBlur);
-      window.removeEventListener('focus', handleFocus);
       window.removeEventListener('contextmenu', handleContextMenu);
       window.removeEventListener('keydown', handleKeyDown);
     };
@@ -47,16 +50,13 @@ export function AntiScreenshotOverlay({ active }) {
       {/* Repeating Anti-Screenshot Watermark Grid */}
       <div className="watermark-pattern" />
 
-      {/* Focus Loss / Window Blur Shield */}
-      {isWindowBlurred && (
-        <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-2xl flex flex-col items-center justify-center p-6 text-center space-y-4">
-          <EyeOff className="w-16 h-16 text-pink-500 animate-pulse" />
-          <h2 className="text-2xl font-black text-pink-400 font-mono">
-            SCREEN PROTECTED // FOCUS LOST
+      {/* Temporary Blackout ONLY during active Screenshot key press */}
+      {isScreenshotAttempted && (
+        <div className="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-6 text-center space-y-4">
+          <EyeOff className="w-16 h-16 text-red-500 animate-pulse" />
+          <h2 className="text-2xl font-black text-red-400 font-mono">
+            SCREENSHOT BLOCKED
           </h2>
-          <p className="text-xs text-slate-400 max-w-sm">
-            Content is blurred while app window is out of focus to prevent unauthorized screen captures or tab switching.
-          </p>
         </div>
       )}
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Flame, Dices, Disc, RefreshCw } from 'lucide-react';
 import { soundEffects } from '../utils/audioSynth';
+import { RoomCodeBadge } from './RoomCodeBadge';
 
 export function Navbar({ gameState, currentUser, onSwitchMode }) {
   const isIsolated = gameState.phase === 'QUESTION_SELECTION' && gameState.targetPlayerId === currentUser.id;
@@ -24,12 +25,9 @@ export function Navbar({ gameState, currentUser, onSwitchMode }) {
       </div>
 
       {/* Room Code & In-Game Gamemode Badge / Switcher */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {gameState.roomCode && (
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-black border border-slate-800 shadow-lg text-xs font-mono">
-            <span className="text-slate-400">ROOM:</span>
-            <span className="text-slate-100 font-bold tracking-widest">{gameState.roomCode}</span>
-          </div>
+          <RoomCodeBadge roomCode={gameState.roomCode} />
         )}
 
         {gameState.phase !== 'LOBBY' && (

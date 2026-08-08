@@ -79,13 +79,13 @@ export function AnswerTimer({ gameState, currentUser, onAnswerSubmit, onTimeoutP
                 value={answerInput}
                 onChange={(e) => setAnswerInput(e.target.value)}
                 placeholder="Type your response here..."
-                rows={3}
-                className="w-full bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl p-4 text-xs text-slate-100 focus:outline-none resize-none shadow-inner"
+                rows={4}
+                className="w-full bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl p-5 text-sm text-slate-100 focus:outline-none resize-none shadow-inner leading-relaxed"
               />
               <button
                 type="submit"
                 disabled={!answerInput.trim()}
-                className="w-full btn-black-primary text-xs py-3.5 rounded-xl shadow-lg"
+                className="w-full btn-black-primary text-xs py-4 rounded-xl shadow-lg"
               >
                 <Send className="w-4 h-4" />
                 Submit Answer
@@ -93,7 +93,7 @@ export function AnswerTimer({ gameState, currentUser, onAnswerSubmit, onTimeoutP
             </form>
           ) : (
             /* Spectator View */
-            <div className="p-5 rounded-xl bg-black border border-slate-800 text-slate-300 text-xs font-semibold my-2">
+            <div className="p-6 rounded-xl bg-black border border-slate-800 text-slate-300 text-sm font-semibold my-2 leading-relaxed">
               Waiting for <strong className="text-white">{targetPlayer?.name}</strong> to answer...
             </div>
           )}
@@ -106,13 +106,13 @@ export function AnswerTimer({ gameState, currentUser, onAnswerSubmit, onTimeoutP
             Answer Revealed
           </div>
 
-          <div className="p-6 rounded-2xl bg-black border border-slate-800 text-left space-y-4 shadow-xl my-2">
-            <div className="text-xs font-mono font-bold text-slate-400 uppercase">Question:</div>
-            <div className="text-sm font-medium text-slate-300 italic font-heading">"{question.text}"</div>
+          <div className="p-6 sm:p-8 rounded-2xl bg-black border border-slate-800 text-left space-y-5 shadow-xl my-2">
+            <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">Question:</div>
+            <div className="text-base sm:text-lg font-medium text-slate-300 italic font-heading leading-relaxed">"{question.text}"</div>
             
-            <div className="border-t border-slate-800 pt-4">
-              <div className="text-xs font-mono font-bold text-slate-400 uppercase">{targetPlayer?.name}'s Response:</div>
-              <div className="text-xl font-bold font-heading text-slate-100 mt-1">{gameState.answerText || answerInput}</div>
+            <div className="border-t border-slate-800 pt-5 space-y-2">
+              <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">{targetPlayer?.name}'s Response:</div>
+              <div className="text-xl sm:text-2xl font-bold font-heading text-slate-100 leading-relaxed">{gameState.answerText || answerInput}</div>
             </div>
           </div>
 

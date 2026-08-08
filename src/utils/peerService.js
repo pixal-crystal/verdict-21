@@ -1,10 +1,11 @@
 // LAN BroadcastChannel & Peer Networking Hub
 export class NetworkHub {
-  constructor(roomCode, isHost = false, onStateUpdate = null, onChatMessage = null) {
+  constructor(roomCode, isHost = false, onStateUpdate = null, onChatMessage = null, onClientAction = null) {
     this.roomCode = roomCode;
     this.isHost = isHost;
     this.onStateUpdate = onStateUpdate;
     this.onChatMessage = onChatMessage;
+    this.onClientAction = onClientAction;
     
     this.channelName = `TOD_ROOM_${roomCode}`;
     this.broadcastChannel = new BroadcastChannel(this.channelName);
@@ -13,10 +14,24 @@ export class NetworkHub {
       this.handleIncomingPacket(event.data);
     };
 
+    // Storage fallback for cross-tab sync
+    this.storageKey = `TOD_SYNC_${roomCode}`;
+    this.handleStorageEvent = (event) => {
+      if (event.key === this.storageKey && event.newValue) {
+        try {
+          const parsed = JSON.parse(event.newValue);
+          this.handleIncomingPacket(parsed);
+        } catch (e) {
+          // ignore error
+        }
+      }
+    };
+    window.addEventListener('storage', this.handleStorageEvent);
+
     // LAN Discovery Channel
     this.discoveryChannel = new BroadcastChannel('TOD_LAN_DISCOVERY');
     this.discoveryChannel.onmessage = (event) => {
-      if (this.isHost && event.data.type === 'PING_LAN_ROOMS') {
+      if (this.isHost && (event.data.type === 'PING_LAN_ROOMS' || event.data.type === 'ANNOUNCE_LAN_ROOM')) {
         this.discoveryChannel.postMessage({
           type: 'ANNOUNCE_LAN_ROOM',
           roomCode: this.roomCode,
@@ -35,24 +50,39 @@ export class NetworkHub {
   }
 
   broadcastState(gameState) {
-    this.broadcastChannel.postMessage({
+    const packet = {
       type: 'STATE_UPDATE',
-      state: gameState
-    });
+      state: gameState,
+      _ts: Date.now()
+    };
+    this.broadcastChannel.postMessage(packet);
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(packet));
+    } catch (e) {}
   }
 
   broadcastChat(chatItem) {
-    this.broadcastChannel.postMessage({
+    const packet = {
       type: 'CHAT_MESSAGE',
-      chat: chatItem
-    });
+      chat: chatItem,
+      _ts: Date.now()
+    };
+    this.broadcastChannel.postMessage(packet);
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(packet));
+    } catch (e) {}
   }
 
   broadcastAction(actionPayload) {
-    this.broadcastChannel.postMessage({
+    const packet = {
       type: 'CLIENT_ACTION',
-      action: actionPayload
-    });
+      action: actionPayload,
+      _ts: Date.now()
+    };
+    this.broadcastChannel.postMessage(packet);
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(packet));
+    } catch (e) {}
   }
 
   handleIncomingPacket(data) {
@@ -69,6 +99,7 @@ export class NetworkHub {
   destroy() {
     if (this.broadcastChannel) this.broadcastChannel.close();
     if (this.discoveryChannel) this.discoveryChannel.close();
+    if (this.handleStorageEvent) window.removeEventListener('storage', this.handleStorageEvent);
   }
 }
 

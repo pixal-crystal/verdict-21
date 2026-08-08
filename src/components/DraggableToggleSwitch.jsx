@@ -83,7 +83,6 @@ export function DraggableToggleSwitch({ mode, onChange, disabled = false }) {
         {/* Track & Knob */}
         <div
           ref={trackRef}
-          onClick={handleToggleClick}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}

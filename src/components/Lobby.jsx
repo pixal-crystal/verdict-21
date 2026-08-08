@@ -12,8 +12,8 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
   const [gameMode, setGameMode] = useState('1-21');
   const [lanRooms, setLanRooms] = useState([]);
   const [isScanning, setIsScanning] = useState(true);
-
   const [showSetup, setShowSetup] = useState(false);
+  const [lobbyTab, setLobbyTab] = useState('CREATE'); // 'CREATE' for Host, 'JOIN' for Participant
 
   useEffect(() => {
     const stopScanning = scanLanRooms((rooms) => {
@@ -97,23 +97,58 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
         </div>
       ) : (
         <>
+          {/* Host vs Participant Selector */}
+          <div className="flex justify-center gap-4 my-2">
+            <button
+              type="button"
+              onClick={() => {
+                soundEffects.playTick();
+                setLobbyTab('CREATE');
+              }}
+              className={`flex items-center gap-2 px-6 py-3.5 rounded-xl font-mono text-xs font-bold uppercase transition-all border shadow-lg ${
+                lobbyTab === 'CREATE'
+                  ? 'bg-slate-800 border-slate-400 text-white scale-105 shadow-slate-500/20'
+                  : 'bg-black/60 border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Plus className="w-4 h-4 text-blue-400" />
+              <span>👑 CREATE ROOM (HOST)</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                soundEffects.playTick();
+                setLobbyTab('JOIN');
+              }}
+              className={`flex items-center gap-2 px-6 py-3.5 rounded-xl font-mono text-xs font-bold uppercase transition-all border shadow-lg ${
+                lobbyTab === 'JOIN'
+                  ? 'bg-slate-800 border-slate-400 text-white scale-105 shadow-slate-500/20'
+                  : 'bg-black/60 border-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <LogIn className="w-4 h-4 text-emerald-400" />
+              <span>🎮 JOIN ROOM (PARTICIPANT)</span>
+            </button>
+          </div>
+
           {/* Main Grid: Fills space evenly with clean box padding */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 w-full items-stretch animate-in fade-in zoom-in duration-300 my-6">
-            {/* Left Column: Player Identity */}
-            <div className="lg:col-span-5 glass-black p-6 sm:p-8 flex flex-col justify-between border border-slate-800/80 shadow-2xl space-y-6">
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-                  <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
-                    <Users className="w-4 h-4 text-slate-300" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 lg:gap-16 w-full items-stretch animate-in fade-in zoom-in duration-300 my-4">
+            {/* Left Column: Player Identity (Settings) */}
+            <div className="lg:col-span-5 glass-black p-8 sm:p-10 flex flex-col justify-between border border-slate-800/80 shadow-2xl space-y-8">
+              <div className="space-y-8">
+                <div className="flex items-center gap-3 border-b border-slate-800 pb-5">
+                  <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
+                    <Users className="w-5 h-5 text-slate-300" />
                   </div>
                   <div>
-                    <h2 className="text-base font-bold font-heading text-slate-100 uppercase">Player Identity</h2>
-                    <span className="text-[11px] text-slate-400">Set your display name and avatar</span>
+                    <h2 className="text-base font-bold font-heading text-slate-100 uppercase">Player Settings</h2>
+                    <span className="text-[11px] text-slate-400">Set your display name, avatar & color</span>
                   </div>
                 </div>
 
                 {/* Name Input */}
-                <div className="space-y-2.5 my-4">
+                <div className="space-y-3 my-6">
                   <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider">
                     DISPLAY NAME
                   </label>
@@ -123,21 +158,21 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
                     onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value })}
                     placeholder="Enter your name..."
                     maxLength={14}
-                    className="w-full bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-4 py-3 text-slate-100 font-bold text-sm focus:outline-none transition-all shadow-inner"
+                    className="w-full bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-4 py-3.5 text-slate-100 font-bold text-sm focus:outline-none transition-all shadow-inner"
                   />
                 </div>
 
                 {/* Avatar Selector */}
-                <div className="space-y-2.5 my-6">
+                <div className="space-y-3 my-8">
                   <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider">
                     CHOOSE AVATAR
                   </label>
-                  <div className="grid grid-cols-5 gap-3 sm:gap-4 p-4 bg-black/50 border border-slate-800/80 rounded-2xl">
+                  <div className="grid grid-cols-5 gap-4 sm:gap-5 p-5 bg-black/50 border border-slate-800/80 rounded-2xl">
                     {AVATARS.map((av) => (
                       <button
                         key={av}
                         onClick={() => setCurrentUser({ ...currentUser, avatar: av })}
-                        className={`text-xl p-2 rounded-xl border-2 transition-all flex items-center justify-center aspect-square ${
+                        className={`text-xl p-2.5 rounded-xl border-2 transition-all flex items-center justify-center aspect-square ${
                           currentUser.avatar === av
                             ? 'bg-slate-800 border-slate-400 scale-105 shadow-md'
                             : 'bg-black border-slate-800 hover:border-slate-700'
@@ -150,17 +185,17 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
                 </div>
 
                 {/* Accent Color Selector */}
-                <div className="space-y-2.5 my-6">
+                <div className="space-y-3 my-8">
                   <label className="block text-[11px] font-heading font-bold text-slate-300 uppercase tracking-wider">
                     ACCENT COLOR
                   </label>
-                  <div className="flex items-center gap-3 sm:gap-4 p-4 bg-black/50 border border-slate-800/80 rounded-2xl justify-around">
+                  <div className="flex items-center gap-4 p-5 bg-black/50 border border-slate-800/80 rounded-2xl justify-around">
                     {STEALTH_ACCENTS.map((c) => (
                       <button
                         key={c}
                         onClick={() => setCurrentUser({ ...currentUser, color: c })}
                         style={{ backgroundColor: c }}
-                        className={`w-8 h-8 rounded-lg border-2 transition-all ${
+                        className={`w-9 h-9 rounded-lg border-2 transition-all ${
                           currentUser.color === c ? 'border-white scale-110 shadow-md' : 'border-transparent opacity-75'
                         }`}
                       />
@@ -170,101 +205,120 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
               </div>
             </div>
 
-            {/* Right Column: Game Selection */}
-            <div className="lg:col-span-7 glass-black-highlight p-6 sm:p-8 flex flex-col justify-between border border-slate-700/80 shadow-2xl space-y-6">
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-                  <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
-                    <Play className="w-4 h-4 text-slate-300 fill-current" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-bold font-heading text-slate-100 uppercase">Game Selection</h2>
-                    <span className="text-[11px] text-slate-400">Choose how the target player is selected</span>
-                  </div>
-                </div>
-
-                {/* Mode Header & Draggable Switch in Middle */}
-                <div className="flex flex-col items-center justify-center text-center pt-2 pb-2">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <span className="text-[10px] font-bold px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">🌈 Multiple mode support</span>
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold font-heading text-slate-300 mb-2">
-                    Switch between <span className="text-white">multiple modes</span><br/>and targets instantly
-                  </h3>
-                  
-                  {/* Draggable Switch Centered Right in the Middle */}
-                  <DraggableToggleSwitch
-                    mode={gameMode}
-                    onChange={(newMode) => setGameMode(newMode)}
-                  />
-                </div>
-
-                {/* The White Dynamic Content Card */}
-                <div className="w-full bg-white rounded-[24px] p-6 sm:p-8 shadow-xl transition-all duration-300 relative overflow-hidden group border border-slate-200 my-6">
-                  <div className="flex items-center justify-between mb-6 relative z-10">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-inner ${gameMode === '1-21' ? 'bg-blue-100 text-blue-500' : 'bg-pink-100 text-pink-500'}`}>
-                      {gameMode === '1-21' ? <Dices className="w-6 h-6" /> : <Disc className="w-6 h-6" />}
+            {/* Right Column: Game Selection (HOST) OR Join Panel (PARTICIPANT) */}
+            <div className="lg:col-span-7 glass-black-highlight p-10 sm:p-12 md:p-14 flex flex-col justify-between border border-slate-700/80 shadow-2xl space-y-12">
+              {lobbyTab === 'CREATE' ? (
+                /* Host Game Selection View */
+                <div className="space-y-12 sm:space-y-16">
+                  <div className="flex items-center gap-3 border-b border-slate-800 pb-6 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
+                      <Play className="w-5 h-5 text-slate-300 fill-current" />
                     </div>
-                    <span className={`text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full ${gameMode === '1-21' ? 'bg-blue-50 text-blue-600' : 'bg-pink-50 text-pink-600'}`}>
-                      {gameMode === '1-21' ? '1 to 21' : 'Bottle Spin'}
-                    </span>
-                  </div>
-                  
-                  <div className="relative z-10">
-                    <h4 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">
-                      {gameMode === '1-21' ? 'Counting Game' : 'Spin the Bottle'}
-                    </h4>
-                    <p className="text-slate-500 text-sm font-medium leading-relaxed">
-                      {gameMode === '1-21' 
-                        ? 'Take turns adding +1, +2, or +3. Whoever hits 21 loses and becomes the target.' 
-                        : 'The bottle spins and lands randomly on a player. The chosen player becomes the target.'}
-                    </p>
+                    <div>
+                      <h2 className="text-base font-bold font-heading text-slate-100 uppercase">Host Game Setup</h2>
+                      <span className="text-[11px] text-slate-400">Choose gamemode and launch room</span>
+                    </div>
                   </div>
 
-                  {/* Colorful Abstract Background Blobs */}
-                  <div className={`absolute top-[-20%] right-[-10%] w-48 h-48 blur-[40px] rounded-full transition-all duration-700 opacity-30 ${gameMode === '1-21' ? 'bg-blue-400' : 'bg-pink-400'}`} />
-                  <div className={`absolute bottom-[-20%] left-[-10%] w-32 h-32 blur-[30px] rounded-full transition-all duration-700 opacity-30 ${gameMode === '1-21' ? 'bg-purple-400' : 'bg-orange-400'}`} />
-                </div>
+                  {/* Mode Header & Draggable Switch in Middle */}
+                  <div className="flex flex-col items-center justify-center text-center pt-4 pb-4 space-y-8">
+                    <h3 className="text-xl sm:text-2xl font-bold font-heading text-slate-300 mb-4">
+                      Switch between <span className="text-white">multiple modes</span><br/>and targets instantly
+                    </h3>
+                    
+                    {/* Draggable Switch Centered Right in the Middle */}
+                    <div className="my-10 sm:my-12">
+                      <DraggableToggleSwitch
+                        mode={gameMode}
+                        onChange={(newMode) => setGameMode(newMode)}
+                      />
+                    </div>
+                  </div>
 
-                {/* Create Room Button */}
-                <button
-                  onClick={handleCreate}
-                  className="w-full btn-black-primary text-xs sm:text-sm py-4 rounded-xl shadow-lg my-6"
-                >
-                  <Plus className="w-4 h-4" />
-                  CREATE ROOM ({gameMode === '1-21' ? '1 to 21' : 'Bottle Spin'})
-                </button>
-              </div>
+                  {/* The White Dynamic Content Card */}
+                  <div className="w-full bg-white rounded-[24px] p-6 sm:p-8 shadow-xl transition-all duration-300 relative overflow-hidden group border border-slate-200 my-20 sm:my-24">
+                    <div className="flex items-center justify-between mb-5 relative z-10">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-inner ${gameMode === '1-21' ? 'bg-blue-100 text-blue-500' : 'bg-pink-100 text-pink-500'}`}>
+                        {gameMode === '1-21' ? <Dices className="w-6 h-6" /> : <Disc className="w-6 h-6" />}
+                      </div>
+                      <span className={`text-xs font-bold uppercase tracking-widest px-3.5 py-1.5 rounded-full ${gameMode === '1-21' ? 'bg-blue-50 text-blue-600' : 'bg-pink-50 text-pink-600'}`}>
+                        {gameMode === '1-21' ? '1 to 21' : 'Bottle Spin'}
+                      </span>
+                    </div>
+                    
+                    <div className="relative z-10 space-y-2">
+                      <h4 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">
+                        {gameMode === '1-21' ? 'Counting Game' : 'Spin the Bottle'}
+                      </h4>
+                      <p className="text-slate-500 text-sm font-medium leading-relaxed">
+                        {gameMode === '1-21' 
+                          ? 'Take turns adding +1, +2, or +3. Whoever hits 21 loses and becomes the target.' 
+                          : 'The bottle spins and lands randomly on a player. The chosen player becomes the target.'}
+                      </p>
+                    </div>
 
-              {/* Join by Code Section */}
-              <div className="border-t border-slate-800 pt-6 space-y-3 mt-8">
-                <label className="block text-[11px] font-heading font-bold text-slate-400 uppercase tracking-wider">
-                  JOIN EXISTING ROOM VIA CODE
-                </label>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="text"
-                    value={roomCodeInput}
-                    onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
-                    placeholder="ENTER CODE (e.g. TOD-8A2F)"
-                    maxLength={10}
-                    className="flex-1 bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-4 py-3 text-xs font-mono text-slate-100 uppercase tracking-widest focus:outline-none"
-                  />
+                    <div className={`absolute top-[-20%] right-[-10%] w-48 h-48 blur-[40px] rounded-full transition-all duration-700 opacity-30 ${gameMode === '1-21' ? 'bg-blue-400' : 'bg-pink-400'}`} />
+                    <div className={`absolute bottom-[-20%] left-[-10%] w-32 h-32 blur-[30px] rounded-full transition-all duration-700 opacity-30 ${gameMode === '1-21' ? 'bg-purple-400' : 'bg-orange-400'}`} />
+                  </div>
+
+                  {/* Create Room Button */}
                   <button
-                    onClick={() => handleJoin()}
-                    disabled={!roomCodeInput.trim()}
-                    className="btn-black-accent text-xs px-6 py-3 rounded-xl"
+                    onClick={handleCreate}
+                    className="w-full btn-black-primary text-xs sm:text-sm py-5 sm:py-6 rounded-xl shadow-xl my-16 sm:my-20"
                   >
-                    <LogIn className="w-4 h-4" />
-                    JOIN
+                    <Plus className="w-4 h-4" />
+                    CREATE ROOM ({gameMode === '1-21' ? '1 to 21' : 'Bottle Spin'})
                   </button>
                 </div>
-              </div>
+              ) : (
+                /* Participant View (Only Settings & Join Room Panel!) */
+                <div className="space-y-8 flex flex-col justify-between h-full">
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-3 border-b border-slate-800 pb-5">
+                      <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center">
+                        <LogIn className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <div>
+                        <h2 className="text-base font-bold font-heading text-slate-100 uppercase">Participant Join Panel</h2>
+                        <span className="text-[11px] text-slate-400">Enter a room code to join your friends</span>
+                      </div>
+                    </div>
+
+                    <div className="p-6 rounded-2xl bg-black/80 border border-slate-800 space-y-4 my-6 shadow-xl">
+                      <label className="block text-xs font-heading font-bold text-slate-300 uppercase tracking-wider">
+                        ENTER ROOM CODE
+                      </label>
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <input
+                          type="text"
+                          value={roomCodeInput}
+                          onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
+                          placeholder="ENTER CODE (e.g. TOD-8A2F)"
+                          maxLength={10}
+                          className="flex-1 bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-5 py-4 text-sm font-mono text-slate-100 uppercase tracking-widest focus:outline-none shadow-inner"
+                        />
+                        <button
+                          onClick={() => handleJoin()}
+                          disabled={!roomCodeInput.trim()}
+                          className="btn-black-accent text-sm px-8 py-4 rounded-xl shadow-lg"
+                        >
+                          <LogIn className="w-5 h-5" />
+                          JOIN ROOM
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-5 rounded-xl bg-slate-900/60 border border-slate-800 text-xs font-mono text-slate-400 leading-relaxed text-center">
+                    💡 Host handles gamemode selection. Once you click <strong>JOIN ROOM</strong>, you will connect to the room using your settings!
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Discovered LAN Rooms Card */}
-          <div className="glass-black p-6 sm:p-8 space-y-5 w-full my-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 border border-slate-800/80 shadow-2xl">
+          <div className="glass-black p-8 sm:p-10 space-y-6 w-full my-10 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100 border border-slate-800/80 shadow-2xl">
             <div className="flex items-center justify-between pb-2 border-b border-slate-800">
               <div className="flex items-center gap-2 text-xs sm:text-sm font-bold font-heading text-slate-200">
                 <RefreshCw className={`w-4 h-4 text-slate-400 ${isScanning ? 'animate-spin' : ''}`} />

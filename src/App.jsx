@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Lobby } from './components/Lobby';
 import { ModeSelection } from './components/ModeSelection';
+import { TargetCategoryChoice } from './components/TargetCategoryChoice';
 import { CountingGame } from './components/CountingGame';
 import { BottleSpinner } from './components/BottleSpinner';
 import { RpsTieBreaker } from './components/RpsTieBreaker';
@@ -30,6 +31,45 @@ export function App() {
   const [antiScreenshot, setAntiScreenshot] = useState(true);
   const [networkHub, setNetworkHub] = useState(null);
 
+  // Target Player chooses Truth or Dare category
+  const handleTargetChooseCategory = (category) => {
+    const nextState = {
+      ...gameState,
+      choiceType: category,
+      phase: 'QUESTION_SELECTION'
+    };
+    setGameState(nextState);
+    networkHub?.broadcastState(nextState);
+  };
+
+  // Host handles incoming client actions (e.g. JOIN_PLAYER)
+  const handleClientAction = (action) => {
+    if (!action) return;
+    if (action.type === 'JOIN_PLAYER' && action.player) {
+      setGameState((prevState) => {
+        const existingIdx = prevState.players.findIndex(p => p.id === action.player.id || p.name === action.player.name);
+        let updatedPlayers = [...prevState.players];
+        if (existingIdx >= 0) {
+          updatedPlayers[existingIdx] = { ...updatedPlayers[existingIdx], ...action.player };
+        } else {
+          updatedPlayers.push({ ...action.player, isHost: false, isBenched: false, benchRoundsLeft: 0, score: 0 });
+        }
+
+        const nextState = {
+          ...prevState,
+          players: updatedPlayers
+        };
+
+        // Broadcast updated game state to all room members
+        if (networkHub) {
+          networkHub.setHostDetails(prevState.players[0]?.name || 'Host', updatedPlayers.length, prevState.gameMode);
+          networkHub.broadcastState(nextState);
+        }
+        return nextState;
+      });
+    }
+  };
+
   // Initialize Host Room (Transitions straight into In-Game Mode Selection)
   const handleCreateRoom = ({ name, avatar, color, gameMode }) => {
     const code = `TOD-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
@@ -47,7 +87,13 @@ export function App() {
 
     setGameState(nextState);
 
-    const hub = new NetworkHub(code, true, (state) => setGameState(state), (msg) => setChatMessages(prev => [...prev, msg]));
+    const hub = new NetworkHub(
+      code,
+      true,
+      (state) => setGameState(state),
+      (msg) => setChatMessages(prev => [...prev, msg]),
+      (action) => handleClientAction(action)
+    );
     hub.setHostDetails(name, players.length, gameMode || '1-21');
     setNetworkHub(hub);
   };
@@ -55,14 +101,33 @@ export function App() {
   // Join Room
   const handleJoinRoom = ({ roomCode, name, avatar, color }) => {
     const me = { id: currentUser.id, name, avatar, color, isHost: false, isBenched: false, benchRoundsLeft: 0, score: 0 };
-    const hub = new NetworkHub(roomCode, false, (state) => setGameState(state), (msg) => setChatMessages(prev => [...prev, msg]));
+    
+    // Set initial client state with room code
+    setGameState(prev => ({
+      ...prev,
+      roomCode,
+      isHost: false
+    }));
+
+    const hub = new NetworkHub(
+      roomCode,
+      false,
+      (state) => setGameState(state),
+      (msg) => setChatMessages(prev => [...prev, msg])
+    );
     setNetworkHub(hub);
 
-    hub.broadcastAction({ type: 'JOIN_PLAYER', player: me });
+    // Send Join action to host
+    setTimeout(() => {
+      hub.broadcastAction({ type: 'JOIN_PLAYER', player: me });
+    }, 100);
   };
 
-  // Gamemode Switcher Handler (Called during the game)
+  // Gamemode Switcher Handler (Called during the game - HOST ONLY)
   const handleSelectMode = (mode, launch = false) => {
+    const isHost = gameState.isHost || (gameState.players.length > 0 && gameState.players[0].id === currentUser.id);
+    if (!isHost) return; // Only room host can change or launch modes!
+
     const nextState = {
       ...gameState,
       gameMode: mode,
@@ -262,6 +327,14 @@ export function App() {
             onRpsComplete={handleRpsComplete}
           />
         );
+      case 'TARGET_CHOICE':
+        return (
+          <TargetCategoryChoice
+            gameState={gameState}
+            currentUser={currentUser}
+            onChooseCategory={handleTargetChooseCategory}
+          />
+        );
       case 'QUESTION_SELECTION':
         if (gameState.targetPlayerId === currentUser.id) {
           return <IsolationChamber targetPlayer={meInState} />;
@@ -336,8 +409,7 @@ export function App() {
                 setChatMessages(prev => [...prev, msg]);
                 networkHub?.broadcastChat(msg);
               }}
-              voiceMuted={voiceMuted}
-              toggleVoiceMute={() => setVoiceMuted(!voiceMuted)}
+              networkHub={networkHub}
             />
           </div>
         )}
