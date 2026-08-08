@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dices, Disc, Play, Sparkles, CheckCircle2 } from 'lucide-react';
 import { soundEffects } from '../utils/audioSynth';
+import { DraggableToggleSwitch } from './DraggableToggleSwitch';
 
 export function ModeSelection({ gameState, currentUser, onSelectMode }) {
   const isHost = gameState.isHost || (gameState.players.length > 0 && gameState.players[0].id === currentUser.id);
@@ -34,6 +35,15 @@ export function ModeSelection({ gameState, currentUser, onSelectMode }) {
             ? 'Choose how the target player will be selected for this round.'
             : 'Waiting for the room host to select the gamemode for this round...'}
         </p>
+
+        {/* Draggable Toggle Switch in the Center */}
+        <div className="pt-4 flex justify-center">
+          <DraggableToggleSwitch
+            mode={selectedMode}
+            onChange={(newMode) => handleChoose(newMode)}
+            disabled={!isHost}
+          />
+        </div>
       </div>
 
       {/* Gamemode Cards Grid */}

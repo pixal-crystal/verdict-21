@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Play, Plus, LogIn, Users, Disc, Dices, RefreshCw } from 'lucide-react';
 import { scanLanRooms } from '../utils/peerService';
 import { soundEffects } from '../utils/audioSynth';
+import { DraggableToggleSwitch } from './DraggableToggleSwitch';
 
 const AVATARS = ['😎', '🔥', '👑', '⚡', '🎮', '🚀', '🔮', '🎭', '👾', '👤'];
 const STEALTH_ACCENTS = ['#475569', '#334155', '#1e293b', '#64748b', '#94a3b8', '#cbd5e1'];
@@ -182,26 +183,20 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
                   </div>
                 </div>
 
-                {/* Mode Header */}
-                <div className="text-center pt-2 pb-2">
+                {/* Mode Header & Draggable Switch in Middle */}
+                <div className="flex flex-col items-center justify-center text-center pt-2 pb-2">
                   <div className="flex items-center justify-center gap-2 mb-2">
                     <span className="text-[10px] font-bold px-3 py-1 bg-slate-800 rounded-full text-slate-300 border border-slate-700">🌈 Multiple mode support</span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold font-heading text-slate-300">
+                  <h3 className="text-xl sm:text-2xl font-bold font-heading text-slate-300 mb-2">
                     Switch between <span className="text-white">multiple modes</span><br/>and targets instantly
                   </h3>
                   
-                  {/* The Massive Toggle Switch */}
-                  <div 
-                    onClick={() => setGameMode(gameMode === '1-21' ? 'BOTTLE_SPIN' : '1-21')}
-                    className={`mx-auto my-6 w-32 h-14 rounded-full bg-gradient-to-b from-[#2A2A2A] to-[#1A1A1A] border border-slate-700 cursor-pointer shadow-[inset_0_4px_8px_rgba(0,0,0,0.6)] flex items-center p-1.5 transition-all ${
-                      gameMode === '1-21' ? 'justify-start' : 'justify-end'
-                    }`}
-                  >
-                    <div 
-                      className="h-full aspect-square bg-white rounded-full shadow-[0_4px_12px_rgba(0,0,0,0.5)] transition-all duration-300 ease-in-out"
-                    />
-                  </div>
+                  {/* Draggable Switch Centered Right in the Middle */}
+                  <DraggableToggleSwitch
+                    mode={gameMode}
+                    onChange={(newMode) => setGameMode(newMode)}
+                  />
                 </div>
 
                 {/* The White Dynamic Content Card */}
