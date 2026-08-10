@@ -8,12 +8,21 @@ const AVATARS = ['😎', '🔥', '👑', '⚡', '🎮', '🚀', '🔮', '🎭', 
 const STEALTH_ACCENTS = ['#475569', '#334155', '#1e293b', '#64748b', '#94a3b8', '#cbd5e1'];
 
 export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser }) {
-  const [roomCodeInput, setRoomCodeInput] = useState('');
+  const urlRoomCode = new URLSearchParams(window.location.search).get('room') || '';
+  const [roomCodeInput, setRoomCodeInput] = useState(urlRoomCode.toUpperCase());
   const [gameMode, setGameMode] = useState('1-21');
   const [lanRooms, setLanRooms] = useState([]);
   const [isScanning, setIsScanning] = useState(true);
-  const [showSetup, setShowSetup] = useState(false);
-  const [lobbyTab, setLobbyTab] = useState('CREATE'); // 'CREATE' for Host, 'JOIN' for Participant
+  const [showSetup, setShowSetup] = useState(Boolean(urlRoomCode));
+  const [lobbyTab, setLobbyTab] = useState(urlRoomCode ? 'JOIN' : 'CREATE'); // 'CREATE' for Host, 'JOIN' for Participant
+
+  useEffect(() => {
+    if (urlRoomCode) {
+      setRoomCodeInput(urlRoomCode.toUpperCase());
+      setShowSetup(true);
+      setLobbyTab('JOIN');
+    }
+  }, [urlRoomCode]);
 
   useEffect(() => {
     const stopScanning = scanLanRooms((rooms) => {
@@ -49,88 +58,43 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col gap-6 sm:gap-8">
-
-      {!showSetup ? (
-        <div className="w-full glass-black p-8 sm:p-12 pb-16 sm:pb-20 flex flex-col items-center gap-10 sm:gap-12 shadow-2xl">
-          <div className="text-center space-y-4">
-            <h2 className="text-2xl sm:text-3xl font-black font-heading text-slate-100 uppercase tracking-wide">
-              How It Works
-            </h2>
-            <p className="text-sm sm:text-base text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed">
-              VERDICT 21 is a stealthy, high-stakes multiplayer Truth or Dare experience designed for seamless real-time play. No bots, no AI—just you and your friends.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 w-full text-center">
-            <div className="flex flex-col items-center justify-center text-center space-y-4 p-6 sm:p-7 rounded-xl border border-slate-800 bg-black/60 shadow-lg">
-              <div className="w-14 h-14 bg-slate-900 rounded-full flex items-center justify-center border border-slate-700">
-                <Users className="w-6 h-6 text-slate-300" />
-              </div>
-              <h3 className="text-sm font-bold text-slate-200 uppercase">1. Join a Lobby</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">Create a room or join your friends using a secure room code.</p>
-            </div>
-            
-            <div className="flex flex-col items-center justify-center text-center space-y-4 p-6 sm:p-7 rounded-xl border border-slate-800 bg-black/60 shadow-lg">
-              <div className="w-14 h-14 bg-slate-900 rounded-full flex items-center justify-center border border-slate-700">
-                <Dices className="w-6 h-6 text-slate-300" />
-              </div>
-              <h3 className="text-sm font-bold text-slate-200 uppercase">2. Select a Target</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">Play the tension-filled 1-to-21 counting game or spin the bottle to pick the victim.</p>
-            </div>
-
-            <div className="flex flex-col items-center justify-center text-center space-y-4 p-6 sm:p-7 rounded-xl border border-slate-800 bg-black/60 shadow-lg">
-              <div className="w-14 h-14 bg-slate-900 rounded-full flex items-center justify-center border border-slate-700">
-                <Play className="w-6 h-6 text-slate-300" />
-              </div>
-              <h3 className="text-sm font-bold text-slate-200 uppercase">3. Face the Verdict</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">Players submit custom questions. The group votes. The target answers.</p>
-            </div>
-          </div>
+    <div className="w-full max-w-5xl mx-auto px-4 py-2 flex flex-col gap-6 animate-in fade-in duration-300">
+      {/* Sleek Minimalist Tab Switcher */}
+      <div className="flex justify-center my-2">
+        <div className="inline-flex p-1.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              soundEffects.playTick();
+              setLobbyTab('CREATE');
+            }}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-mono text-xs font-bold uppercase transition-all ${
+              lobbyTab === 'CREATE'
+                ? 'bg-slate-800 text-white shadow-md border border-slate-700 scale-[1.02]'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Plus className="w-3.5 h-3.5 text-blue-400" />
+            <span>CREATE ROOM</span>
+          </button>
 
           <button
-            onClick={() => setShowSetup(true)}
-            className="mt-6 mb-6 px-14 py-4 sm:py-5 btn-black-primary text-base sm:text-lg font-black tracking-widest shadow-2xl scale-105 hover:scale-110 transition-all"
+            type="button"
+            onClick={() => {
+              soundEffects.playTick();
+              setLobbyTab('JOIN');
+            }}
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-mono text-xs font-bold uppercase transition-all ${
+              lobbyTab === 'JOIN'
+                ? 'bg-slate-800 text-white shadow-md border border-slate-700 scale-[1.02]'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
           >
-            PLAY NOW
+            <LogIn className="w-3.5 h-3.5 text-emerald-400" />
+            <span>JOIN ROOM</span>
           </button>
         </div>
-      ) : (
-        <>
-          {/* Host vs Participant Selector */}
-          <div className="flex justify-center gap-4 my-2">
-            <button
-              type="button"
-              onClick={() => {
-                soundEffects.playTick();
-                setLobbyTab('CREATE');
-              }}
-              className={`flex items-center gap-2 px-6 py-3.5 rounded-xl font-mono text-xs font-bold uppercase transition-all border shadow-lg ${
-                lobbyTab === 'CREATE'
-                  ? 'bg-slate-800 border-slate-400 text-white scale-105 shadow-slate-500/20'
-                  : 'bg-black/60 border-slate-800 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <Plus className="w-4 h-4 text-blue-400" />
-              <span>👑 CREATE ROOM (HOST)</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                soundEffects.playTick();
-                setLobbyTab('JOIN');
-              }}
-              className={`flex items-center gap-2 px-6 py-3.5 rounded-xl font-mono text-xs font-bold uppercase transition-all border shadow-lg ${
-                lobbyTab === 'JOIN'
-                  ? 'bg-slate-800 border-slate-400 text-white scale-105 shadow-slate-500/20'
-                  : 'bg-black/60 border-slate-800 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              <LogIn className="w-4 h-4 text-emerald-400" />
-              <span>🎮 JOIN ROOM (PARTICIPANT)</span>
-            </button>
-          </div>
+      </div>
 
           {/* Main Grid: Fills space evenly with clean box padding */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 sm:gap-12 lg:gap-16 w-full items-stretch animate-in fade-in zoom-in duration-300 my-4">
@@ -288,7 +252,13 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
                       <label className="block text-xs font-heading font-bold text-slate-300 uppercase tracking-wider">
                         ENTER ROOM CODE
                       </label>
-                      <div className="flex flex-col sm:flex-row gap-4">
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleJoin();
+                        }}
+                        className="flex flex-col sm:flex-row gap-4"
+                      >
                         <input
                           type="text"
                           value={roomCodeInput}
@@ -298,14 +268,14 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
                           className="flex-1 bg-black border-2 border-slate-800 focus:border-slate-500 rounded-xl px-5 py-4 text-sm font-mono text-slate-100 uppercase tracking-widest focus:outline-none shadow-inner"
                         />
                         <button
-                          onClick={() => handleJoin()}
+                          type="submit"
                           disabled={!roomCodeInput.trim()}
-                          className="btn-black-accent text-sm px-8 py-4 rounded-xl shadow-lg"
+                          className="btn-black-accent text-sm px-8 py-4 rounded-xl shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 active:scale-95 transition-all"
                         >
                           <LogIn className="w-5 h-5" />
                           JOIN ROOM
                         </button>
-                      </div>
+                      </form>
                     </div>
                   </div>
 
@@ -352,8 +322,6 @@ export function Lobby({ onCreateRoom, onJoinRoom, currentUser, setCurrentUser })
               </div>
             )}
           </div>
-        </>
-      )}
     </div>
   );
 }

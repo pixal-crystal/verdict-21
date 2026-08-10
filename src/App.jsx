@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Lobby } from './components/Lobby';
 import { ModeSelection } from './components/ModeSelection';
@@ -13,11 +14,24 @@ import { BenchPenaltyView } from './components/BenchPenaltyView';
 import { ChatVoicePanel } from './components/ChatVoicePanel';
 import { AntiScreenshotOverlay } from './components/AntiScreenshotOverlay';
 
+import { LobbyPage } from './pages/LobbyPage';
+import { ModeSelectionPage } from './pages/ModeSelectionPage';
+import { GameSelectorPage } from './pages/GameSelectorPage';
+import { CountingGamePage } from './pages/CountingGamePage';
+import { BottleSpinPage } from './pages/BottleSpinPage';
+import { RpsTieBreakerPage } from './pages/RpsTieBreakerPage';
+import { TargetChoicePage } from './pages/TargetChoicePage';
+import { QuestionVotingPage } from './pages/QuestionVotingPage';
+import { AnswerPage } from './pages/AnswerPage';
+
 import { INITIAL_GAME_STATE, setupQuestionPhase, advanceGameRound } from './utils/gameRules';
 import { NetworkHub } from './utils/peerService';
 import { soundEffects } from './utils/audioSynth';
 
 export function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [currentUser, setCurrentUser] = useState({
     id: `user_${Math.floor(Math.random() * 10000)}`,
     name: 'Player 1',
@@ -30,6 +44,43 @@ export function App() {
   const [voiceMuted, setVoiceMuted] = useState(false);
   const [antiScreenshot, setAntiScreenshot] = useState(true);
   const [networkHub, setNetworkHub] = useState(null);
+
+  // Extract room parameter from URL on load if present
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const roomFromUrl = searchParams.get('room');
+    if (roomFromUrl && !gameState.roomCode) {
+      setGameState(prev => ({
+        ...prev,
+        roomCode: roomFromUrl.toUpperCase()
+      }));
+    }
+  }, []);
+
+  // Sync URL route with multiplayer game state phase and room code
+  useEffect(() => {
+    const PHASE_TO_PATH = {
+      'LOBBY': '/',
+      'MODE_SELECTION': '/mode-selection',
+      'COUNTING_GAME': '/counting-game',
+      'BOTTLE_SPIN': '/bottle-spin',
+      'RPS_TIEBREAKER': '/rps-tiebreaker',
+      'TARGET_CHOICE': '/target-choice',
+      'QUESTION_SELECTION': '/question-selection',
+      'ANSWER_TIMER': '/answer',
+      'ANSWER_REVEAL': '/answer',
+      'BENCH_PENALTY': '/bench-penalty'
+    };
+
+    const targetPath = PHASE_TO_PATH[gameState.phase] || '/';
+    const roomQuery = gameState.roomCode ? `?room=${gameState.roomCode}` : '';
+    const fullTarget = `${targetPath}${roomQuery}`;
+    const currentFull = `${location.pathname}${location.search}`;
+
+    if (currentFull !== fullTarget && location.pathname !== '/lobby') {
+      navigate(fullTarget, { replace: true });
+    }
+  }, [gameState.phase, gameState.roomCode, navigate, location.pathname, location.search]);
 
   // Target Player chooses Truth or Dare category
   const handleTargetChooseCategory = (category) => {
@@ -127,12 +178,20 @@ export function App() {
   const handleJoinRoom = ({ roomCode, name, avatar, color }) => {
     const me = { id: currentUser.id, name, avatar, color, isHost: false, isBenched: false, benchRoundsLeft: 0, score: 0 };
     
-    // Set initial client state with room code
-    setGameState(prev => ({
-      ...prev,
-      roomCode,
-      isHost: false
-    }));
+    // Update active user profile
+    setCurrentUser(prev => ({ ...prev, name, avatar, color }));
+
+    // Set initial client state with room code, add self to player list, and move out of lobby phase
+    setGameState(prev => {
+      const existingPlayers = prev.players.filter(p => p.id !== me.id);
+      return {
+        ...prev,
+        roomCode,
+        isHost: false,
+        players: [...existingPlayers, me],
+        phase: prev.phase === 'LOBBY' ? 'MODE_SELECTION' : prev.phase
+      };
+    });
 
     const hub = new NetworkHub(
       roomCode,
@@ -306,92 +365,7 @@ export function App() {
   const meInState = gameState.players.find(p => p.id === currentUser.id);
   const isMeBenched = meInState?.isBenched;
 
-  const renderPhaseView = () => {
-    if (isMeBenched && gameState.phase !== 'LOBBY') {
-      return <BenchPenaltyView roundsLeft={meInState.benchRoundsLeft} player={meInState} />;
-    }
-
-    switch (gameState.phase) {
-      case 'LOBBY':
-        return (
-          <Lobby
-            onCreateRoom={handleCreateRoom}
-            onJoinRoom={handleJoinRoom}
-            currentUser={currentUser}
-            setCurrentUser={setCurrentUser}
-          />
-        );
-      case 'MODE_SELECTION':
-        return (
-          <ModeSelection
-            gameState={gameState}
-            currentUser={currentUser}
-            onSelectMode={handleSelectMode}
-          />
-        );
-      case 'COUNTING_GAME':
-        return (
-          <CountingGame
-            gameState={gameState}
-            currentUser={currentUser}
-            onCountMove={handleCountMove}
-          />
-        );
-      case 'BOTTLE_SPIN':
-        return (
-          <BottleSpinner
-            gameState={gameState}
-            currentUser={currentUser}
-            onBottleLand={handleBottleLand}
-          />
-        );
-      case 'RPS_TIEBREAKER':
-        return (
-          <RpsTieBreaker
-            gameState={gameState}
-            currentUser={currentUser}
-            onRpsComplete={handleRpsComplete}
-          />
-        );
-      case 'TARGET_CHOICE':
-        return (
-          <TargetCategoryChoice
-            gameState={gameState}
-            currentUser={currentUser}
-            onChooseCategory={handleTargetChooseCategory}
-          />
-        );
-      case 'QUESTION_SELECTION':
-        if (gameState.targetPlayerId === currentUser.id) {
-          return <IsolationChamber targetPlayer={meInState} />;
-        }
-        return (
-          <QuestionVoting
-            gameState={gameState}
-            currentUser={currentUser}
-            onVoteQuestion={handleVoteQuestion}
-            onSubmitCustomQuestion={handleSubmitCustomQuestion}
-            onLockQuestion={handleLockQuestion}
-          />
-        );
-      case 'ANSWER_TIMER':
-      case 'ANSWER_REVEAL':
-        return (
-          <AnswerTimer
-            gameState={gameState}
-            currentUser={currentUser}
-            onAnswerSubmit={handleAnswerSubmit}
-            onTimeoutPenalty={handleTimeoutPenalty}
-            onNextRound={handleNextRound}
-          />
-        );
-      case 'BENCH_PENALTY':
-        const benchedPlayer = gameState.players.find(p => p.id === gameState.targetPlayerId);
-        return <BenchPenaltyView roundsLeft={2} player={benchedPlayer} />;
-      default:
-        return null;
-    }
-  };
+  const isLobbyPath = location.pathname === '/' || location.pathname === '/lobby';
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden font-body bg-black text-slate-100">
@@ -407,22 +381,153 @@ export function App() {
         onSwitchMode={() => handleSelectMode(gameState.gameMode, false)}
       />
 
-      {/* Hero Header on Black Background (Only visible in Lobby) */}
-      {gameState.phase === 'LOBBY' && (
-        <div className="flex flex-col items-center justify-center text-center space-y-5 w-full max-w-4xl mx-auto animate-in slide-in-from-top-4 duration-500">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-black font-hero tracking-tighter uppercase leading-none text-slate-100 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-            <span>VERDICT</span> <span className="text-slate-500 font-extrabold">21</span>
+      {/* Minimalist Hero Header (Visible in Lobby) */}
+      {(gameState.phase === 'LOBBY' || isLobbyPath) && (
+        <div className="flex flex-col items-center justify-center text-center space-y-3 w-full max-w-3xl mx-auto animate-in fade-in duration-500">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] font-mono font-medium text-slate-400 uppercase tracking-widest">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            MULTIPLAYER • TRUTH OR DARE
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl font-black font-hero tracking-tight text-white uppercase flex items-center justify-center gap-2">
+            VERDICT <span className="text-slate-600 font-bold">21</span>
           </h1>
           
-          <p className="text-slate-400 text-sm sm:text-base md:text-lg font-heading font-medium max-w-2xl text-center">
-            The most advanced multiplayer Truth or Dare experience. Pixel-perfect target selection and multi-device support.
+          <p className="text-slate-400 text-xs sm:text-sm font-body max-w-md text-center leading-relaxed">
+            Minimalist, stealthy multiplayer target selection & custom truth or dare voting.
           </p>
         </div>
       )}
 
       {/* Main Content Arena */}
       <div className="w-full flex-1 flex flex-col relative justify-center">
-        <main className="flex-1 pb-10 z-10">{renderPhaseView()}</main>
+        <main className="flex-1 pb-10 z-10">
+          {isMeBenched && gameState.phase !== 'LOBBY' ? (
+            <BenchPenaltyView roundsLeft={meInState.benchRoundsLeft} player={meInState} />
+          ) : (
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <LobbyPage
+                    onCreateRoom={handleCreateRoom}
+                    onJoinRoom={handleJoinRoom}
+                    currentUser={currentUser}
+                    setCurrentUser={setCurrentUser}
+                  />
+                }
+              />
+              <Route
+                path="/lobby"
+                element={<Navigate to="/" replace />}
+              />
+              <Route
+                path="/mode-selection"
+                element={
+                  <ModeSelectionPage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onSelectMode={handleSelectMode}
+                  />
+                }
+              />
+              <Route
+                path="/game-selector"
+                element={
+                  <GameSelectorPage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onSelectMode={handleSelectMode}
+                  />
+                }
+              />
+              <Route
+                path="/games"
+                element={
+                  <GameSelectorPage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onSelectMode={handleSelectMode}
+                  />
+                }
+              />
+              <Route
+                path="/counting-game"
+                element={
+                  <CountingGamePage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onCountMove={handleCountMove}
+                  />
+                }
+              />
+              <Route
+                path="/bottle-spin"
+                element={
+                  <BottleSpinPage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onBottleLand={handleBottleLand}
+                  />
+                }
+              />
+              <Route
+                path="/rps-tiebreaker"
+                element={
+                  <RpsTieBreakerPage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onRpsComplete={handleRpsComplete}
+                  />
+                }
+              />
+              <Route
+                path="/target-choice"
+                element={
+                  <TargetChoicePage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onChooseCategory={handleTargetChooseCategory}
+                  />
+                }
+              />
+              <Route
+                path="/question-selection"
+                element={
+                  <QuestionVotingPage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onVoteQuestion={handleVoteQuestion}
+                    onSubmitCustomQuestion={handleSubmitCustomQuestion}
+                    onLockQuestion={handleLockQuestion}
+                  />
+                }
+              />
+              <Route
+                path="/answer"
+                element={
+                  <AnswerPage
+                    gameState={gameState}
+                    currentUser={currentUser}
+                    onAnswerSubmit={handleAnswerSubmit}
+                    onTimeoutPenalty={handleTimeoutPenalty}
+                    onNextRound={handleNextRound}
+                  />
+                }
+              />
+              <Route
+                path="/bench-penalty"
+                element={
+                  <BenchPenaltyView
+                    roundsLeft={2}
+                    player={gameState.players.find(p => p.id === gameState.targetPlayerId)}
+                  />
+                }
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          )}
+        </main>
 
         {/* Integrated Chat & Voice Panel */}
         {gameState.phase !== 'LOBBY' && (

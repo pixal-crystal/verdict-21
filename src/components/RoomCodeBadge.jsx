@@ -10,7 +10,8 @@ export function RoomCodeBadge({ roomCode, large = false }) {
   const handleCopy = (e) => {
     e.stopPropagation();
     soundEffects.playSuccessChime();
-    navigator.clipboard.writeText(roomCode);
+    const shareUrl = `${window.location.origin}${window.location.pathname}?room=${roomCode}`;
+    navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -20,10 +21,10 @@ export function RoomCodeBadge({ roomCode, large = false }) {
       <div className="flex flex-col items-center gap-3 my-4 p-5 sm:p-6 rounded-2xl bg-black/90 border-2 border-slate-700/80 shadow-2xl">
         <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
           <Share2 className="w-4 h-4 text-blue-400" />
-          ROOM CODE TO SHARE WITH FRIENDS
+          SHARE LINK & ROOM CODE WITH FRIENDS
         </span>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-center gap-3">
           <span className="text-2xl sm:text-3xl font-black font-mono tracking-widest text-slate-100 px-5 py-2.5 bg-slate-900 rounded-xl border border-slate-700 select-all shadow-inner">
             {roomCode}
           </span>
@@ -38,19 +39,19 @@ export function RoomCodeBadge({ roomCode, large = false }) {
             {copied ? (
               <>
                 <Check className="w-4 h-4" />
-                <span>COPIED!</span>
+                <span>LINK COPIED!</span>
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4" />
-                <span>COPY CODE</span>
+                <span>COPY SHARE LINK</span>
               </>
             )}
           </button>
         </div>
 
         <span className="text-[10px] font-mono text-slate-500">
-          {copied ? '✓ Room code copied to clipboard!' : 'Click button or code to copy'}
+          {copied ? '✓ Shareable invite link copied to clipboard!' : 'Click button to copy full invite link with room code'}
         </span>
       </div>
     );
