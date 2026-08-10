@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
-import { Lobby } from './components/Lobby';
-import { ModeSelection } from './components/ModeSelection';
-import { TargetCategoryChoice } from './components/TargetCategoryChoice';
-import { CountingGame } from './components/CountingGame';
-import { BottleSpinner } from './components/BottleSpinner';
-import { RpsTieBreaker } from './components/RpsTieBreaker';
-import { IsolationChamber } from './components/IsolationChamber';
-import { QuestionVoting } from './components/QuestionVoting';
-import { AnswerTimer } from './components/AnswerTimer';
 import { BenchPenaltyView } from './components/BenchPenaltyView';
 import { ChatVoicePanel } from './components/ChatVoicePanel';
 import { AntiScreenshotOverlay } from './components/AntiScreenshotOverlay';
 
-import { LobbyPage } from './pages/LobbyPage';
+import { ProfilePage } from './pages/ProfilePage';
+import { RoomSetupPage } from './pages/RoomSetupPage';
 import { ModeSelectionPage } from './pages/ModeSelectionPage';
 import { GameSelectorPage } from './pages/GameSelectorPage';
 import { CountingGamePage } from './pages/CountingGamePage';
@@ -45,7 +37,7 @@ export function App() {
   const [antiScreenshot, setAntiScreenshot] = useState(true);
   const [networkHub, setNetworkHub] = useState(null);
 
-  // Extract room parameter from URL on load if present
+  // Extract room parameter from URL on load if present — store it but stay on front page
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const roomFromUrl = searchParams.get('room');
@@ -59,8 +51,17 @@ export function App() {
 
   // Sync URL route with multiplayer game state phase and room code
   useEffect(() => {
+    const isLobbyPath = location.pathname === '/' || location.pathname === '/room-setup' || location.pathname === '/join' || location.pathname === '/profile' || location.pathname === '/lobby';
+    
+    if (gameState.phase === 'LOBBY') {
+      // Allow only profile page (/) and room setup page (/room-setup) when not in active game
+      if (location.pathname !== '/' && location.pathname !== '/room-setup') {
+        navigate('/', { replace: true });
+      }
+      return;
+    }
+
     const PHASE_TO_PATH = {
-      'LOBBY': '/',
       'MODE_SELECTION': '/mode-selection',
       'COUNTING_GAME': '/counting-game',
       'BOTTLE_SPIN': '/bottle-spin',
@@ -72,12 +73,12 @@ export function App() {
       'BENCH_PENALTY': '/bench-penalty'
     };
 
-    const targetPath = PHASE_TO_PATH[gameState.phase] || '/';
+    const targetPath = PHASE_TO_PATH[gameState.phase] || '/room-setup';
     const roomQuery = gameState.roomCode ? `?room=${gameState.roomCode}` : '';
     const fullTarget = `${targetPath}${roomQuery}`;
     const currentFull = `${location.pathname}${location.search}`;
 
-    if (currentFull !== fullTarget && location.pathname !== '/lobby') {
+    if (currentFull !== fullTarget) {
       navigate(fullTarget, { replace: true });
     }
   }, [gameState.phase, gameState.roomCode, navigate, location.pathname, location.search]);
@@ -365,11 +366,11 @@ export function App() {
   const meInState = gameState.players.find(p => p.id === currentUser.id);
   const isMeBenched = meInState?.isBenched;
 
-  const isLobbyPath = location.pathname === '/' || location.pathname === '/lobby';
+  const isLobbyPath = location.pathname === '/' || location.pathname === '/profile' || location.pathname === '/room-setup' || location.pathname === '/join' || location.pathname === '/lobby';
 
   return (
     <div className="min-h-screen flex flex-col justify-center items-center relative overflow-hidden font-body bg-black text-slate-100">
-      <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 z-10 flex flex-col justify-center items-center min-h-screen gap-10 sm:gap-16 py-8">
+      <div className="w-full max-w-7xl mx-auto px-6 sm:px-12 lg:px-16 z-10 flex flex-col justify-center items-center min-h-screen gap-10 sm:gap-14 md:gap-18 py-10 sm:py-14">
 
       {/* Anti-Screenshot Overlay */}
       <AntiScreenshotOverlay active={antiScreenshot && gameState.phase !== 'LOBBY'} />
@@ -381,27 +382,9 @@ export function App() {
         onSwitchMode={() => handleSelectMode(gameState.gameMode, false)}
       />
 
-      {/* Minimalist Hero Header (Visible in Lobby) */}
-      {(gameState.phase === 'LOBBY' || isLobbyPath) && (
-        <div className="flex flex-col items-center justify-center text-center space-y-3 w-full max-w-3xl mx-auto animate-in fade-in duration-500">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-800 text-[11px] font-mono font-medium text-slate-400 uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            MULTIPLAYER • TRUTH OR DARE
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl font-black font-hero tracking-tight text-white uppercase flex items-center justify-center gap-2">
-            VERDICT <span className="text-slate-600 font-bold">21</span>
-          </h1>
-          
-          <p className="text-slate-400 text-xs sm:text-sm font-body max-w-md text-center leading-relaxed">
-            Minimalist, stealthy multiplayer target selection & custom truth or dare voting.
-          </p>
-        </div>
-      )}
-
-      {/* Main Content Arena */}
-      <div className="w-full flex-1 flex flex-col relative justify-center">
-        <main className="flex-1 pb-10 z-10">
+      {/* Main Content Arena (Centered vertically and horizontally) */}
+      <div className="w-full flex-1 flex flex-col relative justify-center items-center my-auto">
+        <main className="flex-1 pb-10 z-10 w-full flex flex-col justify-center items-center my-auto">
           {isMeBenched && gameState.phase !== 'LOBBY' ? (
             <BenchPenaltyView roundsLeft={meInState.benchRoundsLeft} player={meInState} />
           ) : (
@@ -409,18 +392,33 @@ export function App() {
               <Route
                 path="/"
                 element={
-                  <LobbyPage
-                    onCreateRoom={handleCreateRoom}
-                    onJoinRoom={handleJoinRoom}
+                  <ProfilePage
                     currentUser={currentUser}
                     setCurrentUser={setCurrentUser}
                   />
                 }
               />
               <Route
-                path="/lobby"
-                element={<Navigate to="/" replace />}
+                path="/profile"
+                element={
+                  <ProfilePage
+                    currentUser={currentUser}
+                    setCurrentUser={setCurrentUser}
+                  />
+                }
               />
+              <Route
+                path="/room-setup"
+                element={
+                  <RoomSetupPage
+                    onCreateRoom={handleCreateRoom}
+                    onJoinRoom={handleJoinRoom}
+                    currentUser={currentUser}
+                  />
+                }
+              />
+              <Route path="/join" element={<Navigate to="/room-setup" replace />} />
+              <Route path="/lobby" element={<Navigate to="/profile" replace />} />
               <Route
                 path="/mode-selection"
                 element={
@@ -441,16 +439,7 @@ export function App() {
                   />
                 }
               />
-              <Route
-                path="/games"
-                element={
-                  <GameSelectorPage
-                    gameState={gameState}
-                    currentUser={currentUser}
-                    onSelectMode={handleSelectMode}
-                  />
-                }
-              />
+              <Route path="/games" element={<Navigate to="/game-selector" replace />} />
               <Route
                 path="/counting-game"
                 element={

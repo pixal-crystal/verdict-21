@@ -41,7 +41,7 @@ export function AnswerTimer({ gameState, currentUser, onAnswerSubmit, onTimeoutP
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 py-6 flex flex-col gap-10 sm:gap-14">
+    <div className="w-full max-w-3xl mx-auto px-4 py-4 flex flex-col items-center justify-center my-auto min-h-[60vh] gap-8">
       {/* Target Question Card */}
       <div className="glass-black-highlight p-7 sm:p-10 text-center space-y-5 border-l-8 border-slate-400 border border-slate-700/80 shadow-xl my-4">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900 border border-slate-700 text-slate-300 text-xs font-mono font-bold uppercase tracking-wider">

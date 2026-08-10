@@ -61,29 +61,25 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-10 sm:gap-14">
+    <div className="w-full max-w-5xl mx-auto px-6 py-8 flex flex-col items-center justify-center my-auto min-h-[60vh] gap-12">
       {/* Target Mode Header */}
-      <div className="glass-black-highlight p-7 sm:p-10 flex flex-wrap items-center justify-between gap-6 border-l-8 border-slate-500 w-full my-4 border border-slate-700/80 shadow-xl">
-        <div>
-          <span className="text-xs font-mono text-slate-400 font-bold tracking-wider uppercase flex items-center gap-1.5">
-            <Flame className="w-4 h-4 text-slate-400" />
-            1 to 21 Counting Mode
-          </span>
-          <h2 className="text-lg font-bold font-heading text-slate-100 mt-1">
+      <div className="glass-black-highlight p-8 sm:p-12 flex flex-wrap items-center justify-between gap-8 border-l-8 border-slate-500 w-full border border-slate-700/80 shadow-xl">
+        <div className="space-y-2">
+          <h2 className="text-lg sm:text-xl font-bold font-heading text-slate-100">
             Whoever reaches <span className="text-slate-100 font-hero text-2xl font-black">21</span> gets selected.
           </h2>
         </div>
-        <div className="text-right">
+        <div className="text-right space-y-2">
           <div className="text-xs font-heading text-slate-400 font-bold uppercase tracking-wider">Turn Player</div>
-          <div className="text-sm font-bold text-slate-100 font-heading flex items-center gap-2">
+          <div className="text-sm font-bold text-slate-100 font-heading flex items-center gap-3">
             <span>{currentTurnPlayer ? currentTurnPlayer.name : 'Waiting'}</span>
-            {isMyTurn && <span className="px-2.5 py-0.5 rounded-lg bg-slate-200 text-black text-[10px] font-black uppercase tracking-wider">Your Turn</span>}
+            {isMyTurn && <span className="px-3 py-1 rounded-lg bg-slate-200 text-black text-[10px] font-black uppercase tracking-wider">Your Turn</span>}
           </div>
         </div>
       </div>
 
       {/* Main Counter Arena */}
-      <div className="glass-black p-8 sm:p-12 flex flex-col items-center justify-center text-center space-y-10 relative overflow-hidden w-full my-6 border border-slate-800/80 shadow-2xl">
+      <div className="glass-black p-10 sm:p-14 flex flex-col items-center justify-center text-center space-y-12 relative overflow-hidden w-full border border-slate-800/80 shadow-2xl">
         {/* Semi-Circular SVG Arc Dial */}
         <div className="relative w-full max-w-lg aspect-[2/1] flex flex-col items-center justify-end">
           <svg viewBox="0 0 400 220" className="w-full h-full drop-shadow-xl overflow-visible">
@@ -118,9 +114,9 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
           </svg>
 
           {/* Center Display */}
-          <div className="absolute bottom-2 flex flex-col items-center justify-center">
+          <div className="absolute bottom-2 flex flex-col items-center justify-center gap-1">
             <span className="text-xs font-heading font-bold text-slate-400 tracking-wider uppercase">Current Count</span>
-            <span className="text-6xl sm:text-7xl font-black font-hero text-slate-100 my-0.5">
+            <span className="text-6xl sm:text-7xl font-black font-hero text-slate-100">
               {currentCount}
             </span>
             <span className="text-xs font-mono text-slate-400">/ 21</span>
@@ -129,11 +125,11 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
 
         {/* Action Controls */}
         {isMyTurn ? (
-          <div className="w-full max-w-lg space-y-5 pt-5 p-6 sm:p-8 rounded-2xl bg-black/60 border border-slate-800/80 my-6 shadow-inner">
-            <div className="text-xs font-heading font-bold text-slate-300 uppercase tracking-wider">
+          <div className="w-full max-w-lg space-y-6 p-8 sm:p-10 rounded-2xl bg-black/60 border border-slate-800/80 shadow-inner">
+            <div className="text-xs font-heading font-bold text-slate-300 uppercase tracking-wider pb-3 border-b border-slate-800/60">
               Select numbers to count:
             </div>
-            <div className="grid grid-cols-3 gap-5 sm:gap-6">
+            <div className="grid grid-cols-3 gap-6 sm:gap-8">
               {[1, 2, 3].map((inc) => {
                 const nextVal = currentCount + inc;
                 const leadsTo21 = nextVal >= 21;
@@ -142,7 +138,7 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
                   <button
                     key={inc}
                     onClick={() => handleCount(inc)}
-                    className={`p-5 sm:p-6 rounded-xl border-2 flex flex-col items-center justify-center gap-2.5 transition-all overflow-hidden ${
+                    className={`p-6 sm:p-8 rounded-xl border-2 flex flex-col items-center justify-center gap-3 transition-all overflow-hidden cursor-pointer ${
                       leadsTo21
                         ? 'bg-red-950/80 border-red-800 text-red-300 hover:bg-red-900 shadow-lg'
                         : 'bg-slate-900 border-slate-700 text-slate-100 hover:border-slate-400 hover:scale-105 shadow-lg'
@@ -162,34 +158,34 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
             </div>
           </div>
         ) : (
-          <div className="p-6 rounded-xl bg-black border border-slate-800 text-slate-400 text-sm font-semibold my-6">
+          <div className="p-8 rounded-xl bg-black border border-slate-800 text-slate-400 text-sm font-semibold">
             Waiting for <strong className="text-slate-200">{currentTurnPlayer ? currentTurnPlayer.name : 'player'}</strong>...
           </div>
         )}
       </div>
 
       {/* Active Players Roster */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-7 w-full my-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 w-full">
         {activePlayers.map((player, idx) => {
           const isTurn = idx === turnPlayerIndex;
           return (
             <div
               key={player.id}
-              className={`p-5 sm:p-6 rounded-xl border-2 flex items-center gap-4 transition-all overflow-hidden ${
+              className={`p-6 sm:p-7 rounded-xl border-2 flex items-center gap-4 transition-all overflow-hidden ${
                 isTurn
                   ? 'bg-slate-900 border-slate-500 shadow-lg scale-102'
                   : 'bg-black border-slate-800 opacity-80'
               }`}
             >
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold border"
+                className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold border"
                 style={{ borderColor: player.color || '#475569', backgroundColor: `${player.color || '#475569'}30` }}
               >
                 {player.avatar}
               </div>
               <div className="overflow-hidden">
                 <div className="text-sm font-bold text-slate-100 truncate font-heading max-w-[120px]">{player.name}</div>
-                <div className="text-[10px] font-mono text-slate-400">
+                <div className="text-[10px] font-mono text-slate-400 mt-1">
                   {isTurn ? 'Turn Active' : 'Waiting'}
                 </div>
               </div>
@@ -199,21 +195,21 @@ export function CountingGame({ gameState, currentUser, onCountMove }) {
       </div>
 
       {/* Counting History */}
-      <div className="glass-black p-7 sm:p-8 space-y-4 w-full my-4">
-        <div className="text-xs font-heading font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+      <div className="glass-black p-8 sm:p-10 space-y-6 w-full">
+        <div className="text-xs font-heading font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2 pb-3 border-b border-slate-800/60">
           <Hash className="w-4 h-4 text-slate-400" />
           Round Log
         </div>
-        <div className="space-y-2 max-h-36 overflow-y-auto pr-2">
+        <div className="space-y-3 max-h-36 overflow-y-auto pr-2">
           {gameState.countHistory && gameState.countHistory.length > 0 ? (
             gameState.countHistory.slice(-5).reverse().map((entry, index) => (
-              <div key={index} className="text-xs font-mono text-slate-300 flex items-center justify-between p-3 rounded-xl bg-black border border-slate-800">
+              <div key={index} className="text-xs font-mono text-slate-300 flex items-center justify-between p-4 rounded-xl bg-black border border-slate-800">
                 <span className="font-bold text-slate-200">{entry.playerName}:</span>
                 <span className="text-slate-400">Counted {entry.numbers.join(', ')}</span>
               </div>
             ))
           ) : (
-            <div className="text-xs text-slate-500 italic">Game started at 0.</div>
+            <div className="text-xs text-slate-500 italic p-4">Game started at 0.</div>
           )}
         </div>
       </div>

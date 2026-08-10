@@ -181,15 +181,11 @@ export function BottleSpinner({ gameState, currentUser, onBottleLand }) {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-6 flex flex-col items-center gap-10 sm:gap-14">
+    <div className="w-full max-w-5xl mx-auto px-4 py-4 flex flex-col items-center justify-center my-auto min-h-[60vh] gap-8">
       {/* Header */}
       <div className="glass-black-highlight p-7 sm:p-10 w-full flex flex-wrap items-center justify-between gap-6 border-l-8 border-slate-500 border border-slate-700/80 shadow-xl my-4">
         <div>
-          <span className="text-xs font-mono text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1.5">
-            <Disc className="w-4 h-4 text-slate-300" />
-            Spin the Bottle Mode
-          </span>
-          <h2 className="text-lg font-bold font-heading text-slate-100 mt-1">
+          <h2 className="text-lg font-bold font-heading text-slate-100">
             Spin the bottle to choose the target player.
           </h2>
         </div>

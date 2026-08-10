@@ -22,14 +22,14 @@ export function DraggableToggleSwitch({ mode, onChange, disabled = false }) {
   const handlePointerMove = (e) => {
     if (!isDragging || !trackRef.current) return;
     const rect = trackRef.current.getBoundingClientRect();
-    const knobWidth = 48; // 12 * 4
-    const padding = 6;
-    const maxSlide = rect.width - knobWidth - padding * 2;
-    if (maxSlide <= 0) return;
+    const knobWidth = 44; // w-11 (44px)
+    const padding = 6;    // p-1.5 (6px)
+    const availableSlide = rect.width - knobWidth - padding * 2;
+    if (availableSlide <= 0) return;
 
     const currentX = e.clientX - rect.left - padding - knobWidth / 2;
-    const clampedX = Math.max(0, Math.min(maxSlide, currentX));
-    const progress = clampedX / maxSlide;
+    const clampedX = Math.max(0, Math.min(availableSlide, currentX));
+    const progress = clampedX / availableSlide;
     setDragProgress(progress);
   };
 
@@ -38,7 +38,7 @@ export function DraggableToggleSwitch({ mode, onChange, disabled = false }) {
     setIsDragging(false);
     e.target.releasePointerCapture?.(e.pointerId);
 
-    // If dragged past midpoint, switch to BOTTLE_SPIN, else 1-21
+    // If dragged past midpoint (0.5), switch mode
     const newMode = dragProgress > 0.5 ? 'BOTTLE_SPIN' : '1-21';
     if (newMode !== mode) {
       soundEffects.playTick();
@@ -48,20 +48,13 @@ export function DraggableToggleSwitch({ mode, onChange, disabled = false }) {
     }
   };
 
-  const handleToggleClick = () => {
-    if (disabled || isDragging) return;
-    const nextMode = mode === '1-21' ? 'BOTTLE_SPIN' : '1-21';
-    soundEffects.playTick();
-    onChange(nextMode);
-  };
-
-  const isCounting = dragProgress <= 0.5;
+  const isCounting = mode === '1-21';
 
   return (
-    <div className="flex flex-col items-center gap-3 my-4 select-none">
+    <div className="flex flex-col items-center select-none w-full py-4">
       {/* Draggable Switch Container */}
-      <div className="flex items-center justify-center gap-4">
-        {/* Left Label */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-8 w-full">
+        {/* Left Label Button */}
         <button
           type="button"
           onClick={() => {
@@ -70,53 +63,49 @@ export function DraggableToggleSwitch({ mode, onChange, disabled = false }) {
               onChange('1-21');
             }
           }}
-          className={`flex items-center gap-2 text-xs font-mono font-bold uppercase transition-all px-3 py-1.5 rounded-xl border ${
+          className={`flex items-center gap-3 text-xs font-mono font-bold uppercase transition-all px-6 py-3 rounded-xl border cursor-pointer min-w-[130px] justify-center ${
             mode === '1-21'
-              ? 'bg-blue-950/80 border-blue-500 text-blue-300 shadow-md shadow-blue-500/20 scale-105'
+              ? 'bg-slate-800 border-slate-600 text-white shadow-lg scale-105'
               : 'bg-black/40 border-slate-800 text-slate-400 hover:text-slate-200'
           }`}
         >
-          <Dices className="w-4 h-4 text-blue-400" />
+          <Dices className="w-4 h-4 text-slate-300" />
           <span>1 to 21</span>
         </button>
 
-        {/* Track & Knob */}
+        {/* Track & Knob Container */}
         <div
           ref={trackRef}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
-          className={`relative w-40 h-14 rounded-full border cursor-grab active:cursor-grabbing p-1.5 flex items-center transition-colors duration-300 shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)] touch-none ${
-            isCounting
-              ? 'bg-gradient-to-r from-blue-950/90 via-slate-900 to-black border-blue-500/50 shadow-blue-500/10'
-              : 'bg-gradient-to-r from-black via-slate-900 to-pink-950/90 border-pink-500/50 shadow-pink-500/10'
-          } ${disabled ? 'opacity-50 pointer-events-none' : ''}`}
+          className={`relative w-40 h-14 rounded-full border cursor-grab active:cursor-grabbing p-1.5 flex items-center transition-colors duration-300 shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)] touch-none select-none bg-slate-900 border-slate-700/80 shrink-0 ${
+            disabled ? 'opacity-50 pointer-events-none' : ''
+          }`}
         >
-          {/* Knob */}
+          {/* Knob (100% Flush left at 6px on 1-21, 100% Flush right at calc(100% - 44px - 6px) on BOTTLE_SPIN) */}
           <div
-            className={`w-11 h-11 rounded-full bg-white shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex items-center justify-center transition-all ${
-              isDragging ? 'scale-110 shadow-2xl' : 'duration-300 ease-out'
+            className={`absolute top-[5px] w-11 h-11 rounded-full bg-slate-800 border border-slate-600 shadow-2xl flex items-center justify-center transition-all ${
+              isDragging ? 'scale-110 bg-slate-700 duration-75' : 'duration-300 ease-out'
             }`}
             style={{
-              transform: `translateX(${dragProgress * (160 - 44 - 12)}px)`
+              left: isDragging
+                ? `calc(6px + ${dragProgress * 104}px)`
+                : mode === '1-21'
+                ? '6px'
+                : 'calc(100% - 44px - 6px)'
             }}
           >
-            {isCounting ? (
-              <Dices className="w-5 h-5 text-blue-600 animate-pulse" />
+            {dragProgress <= 0.5 ? (
+              <Dices className="w-5 h-5 text-slate-100" />
             ) : (
-              <Disc className="w-5 h-5 text-pink-600 animate-pulse" />
+              <Disc className="w-5 h-5 text-slate-100" />
             )}
-          </div>
-
-          {/* Background track text */}
-          <div className="absolute inset-0 flex items-center justify-between px-4 text-[9px] font-mono font-bold text-slate-500 pointer-events-none uppercase tracking-widest">
-            <span className={dragProgress < 0.3 ? 'opacity-0' : 'opacity-100'}>1-21</span>
-            <span className={dragProgress > 0.7 ? 'opacity-0' : 'opacity-100'}>SPIN</span>
           </div>
         </div>
 
-        {/* Right Label */}
+        {/* Right Label Button */}
         <button
           type="button"
           onClick={() => {
@@ -125,18 +114,18 @@ export function DraggableToggleSwitch({ mode, onChange, disabled = false }) {
               onChange('BOTTLE_SPIN');
             }
           }}
-          className={`flex items-center gap-2 text-xs font-mono font-bold uppercase transition-all px-3 py-1.5 rounded-xl border ${
+          className={`flex items-center gap-3 text-xs font-mono font-bold uppercase transition-all px-6 py-3 rounded-xl border cursor-pointer min-w-[130px] justify-center ${
             mode === 'BOTTLE_SPIN'
-              ? 'bg-pink-950/80 border-pink-500 text-pink-300 shadow-md shadow-pink-500/20 scale-105'
+              ? 'bg-slate-800 border-slate-600 text-white shadow-lg scale-105'
               : 'bg-black/40 border-slate-800 text-slate-400 hover:text-slate-200'
           }`}
         >
-          <Disc className="w-4 h-4 text-pink-400" />
+          <Disc className="w-4 h-4 text-slate-300" />
           <span>Bottle Spin</span>
         </button>
       </div>
 
-      <div className="text-[10px] font-mono text-slate-400 tracking-wider flex items-center gap-1.5">
+      <div className="text-[10px] font-mono text-slate-400 tracking-wider flex items-center gap-1.5 pt-6 mt-2">
         <span>↔ Drag or click switch to change gamemode</span>
       </div>
     </div>
